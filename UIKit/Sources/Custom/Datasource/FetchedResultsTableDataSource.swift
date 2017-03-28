@@ -20,18 +20,18 @@ import UIKit
 
 import AAICoreData
 
-public class FetchedResultsTableDataSource<ResultType: NSFetchRequestResult>: NSObject, NSFetchedResultsControllerDelegate, UITableViewDataSource {
+public class FetchedResultsTableDataSource<FetchResultType: NSFetchRequestResult>: NSObject, NSFetchedResultsControllerDelegate, UITableViewDataSource {
 
-    public typealias CellDequeueBlock = (_ tableView: UITableView, _ indexPath: IndexPath, _ object: ResultType) -> UITableViewCell
-    public typealias InsertionBlock = (_ tableView: UITableView, _ indexPath: IndexPath) -> ResultType
+    public typealias CellDequeueBlock = (_ tableView: UITableView, _ indexPath: IndexPath, _ object: FetchResultType) -> UITableViewCell
+    public typealias InsertionBlock = (_ tableView: UITableView, _ indexPath: IndexPath) -> FetchResultType
 
     public private(set) weak var tableView: UITableView?
-    public let fetchedResultsController: NSFetchedResultsController<ResultType>
+    public let fetchedResultsController: NSFetchedResultsController<FetchResultType>
 
     public let dequeueBlock: CellDequeueBlock
     public let insertionBlock: InsertionBlock?
 
-    public init(withTableView tableView: UITableView, fetchedResultsController frc: NSFetchedResultsController<ResultType>, cellDequeueBlock: @escaping CellDequeueBlock, insertionBlock: InsertionBlock? = nil) {
+    public init(withTableView tableView: UITableView, fetchedResultsController frc: NSFetchedResultsController<FetchResultType>, cellDequeueBlock: @escaping CellDequeueBlock, insertionBlock: InsertionBlock? = nil) {
         self.tableView = tableView
 
         fetchedResultsController = frc
@@ -127,20 +127,18 @@ public class FetchedResultsTableDataSource<ResultType: NSFetchRequestResult>: NS
             if let block = insertionBlock, let object = block(tableView, indexPath) as? NSManagedObject , !object.isInserted {
                 fetchedResultsController.managedObjectContext.insert(object)
             }
-            break
+
         case .delete:
             fetchedResultsController.managedObjectContext.delete(object)
-        default:
-            preconditionFailure("Invalid editing style - \(editingStyle)")
+
+        case .none:
+            debugPrint("commit to tableView \(tableView) with editing style - \(editingStyle)")
             break
         }
     }
 
     // Data manipulation - reorder / moving support
 
-//    public func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-//        <#code#>
-//    }
 
     //MARK: - NSFetchedResultsControllerDelegate
 
@@ -152,9 +150,16 @@ public class FetchedResultsTableDataSource<ResultType: NSFetchRequestResult>: NS
         tableView?.endUpdates()
     }
 
-//    public func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, sectionIndexTitleForSectionName sectionName: String) -> String? {
-//        return sectionName
-//    }
+    public func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, sectionIndexTitleForSectionName sectionName: String) -> String? {
+        var result: String?
+
+        if !sectionName.isEmpty {
+            let index = sectionName.index(after: sectionName.startIndex)
+            result = sectionName.substring(to: index)
+        }
+
+        return result
+    }
 
     public func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange sectionInfo: NSFetchedResultsSectionInfo, atSectionIndex sectionIndex: Int, for type: NSFetchedResultsChangeType) {
         guard let tableView = self.tableView else {
