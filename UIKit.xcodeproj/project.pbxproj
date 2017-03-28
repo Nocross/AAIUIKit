@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0C831D161DF448E50074EC3E /* AAICoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C831D141DF448E50074EC3E /* AAICoreData.framework */; };
 		0C831D171DF448E50074EC3E /* AAIFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C831D151DF448E50074EC3E /* AAIFoundation.framework */; };
+		0CA939841E8AFB850092CA46 /* UIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA939831E8AFB850092CA46 /* UIKit.swift */; };
 		0CDDB5E71D85629900EB8C68 /* UIStoryboardSegue+Identifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CDDB5E61D85629900EB8C68 /* UIStoryboardSegue+Identifier.swift */; };
 		0CF8DC9A1D2006D60068A152 /* AAIUIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CF8DC8F1D2006D60068A152 /* AAIUIKit.framework */; };
 		0CF8DC9F1D2006D60068A152 /* UIKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF8DC9E1D2006D60068A152 /* UIKitTests.swift */; };
@@ -23,7 +24,6 @@
 		0CF8DFB81D20354F0068A152 /* UIViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF8DFB71D20354F0068A152 /* UIViewController+Extensions.swift */; };
 		E138914E52C1569BF6158DE4 /* Version.c in Sources */ = {isa = PBXBuildFile; fileRef = E13891F09EBD7A2F9E3C5F20 /* Version.c */; };
 		E13893F629E14DA207D1AB34 /* UnwindActionsTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1389759A2657478D1A583C2 /* UnwindActionsTarget.swift */; };
-		E13897731917891A14D98AFD /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1389E5CD666FCBE95019DB1 /* Version.swift */; };
 		E1389E27E23CB26AC1F5AFE4 /* UnwindSegueAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1389A8D43B8C51EE9C46F6A /* UnwindSegueAction.swift */; };
 /* End PBXBuildFile section */
 
@@ -78,6 +78,7 @@
 		0C831D111DF448CD0074EC3E /* AAIFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AAIFoundation.framework; path = "../../../DerivedData/Medical-Records/Build/Products/Debug-iphonesimulator/AAIFoundation.framework"; sourceTree = "<group>"; };
 		0C831D141DF448E50074EC3E /* AAICoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AAICoreData.framework; path = "../CoreData/build/Debug-iphoneos/AAICoreData.framework"; sourceTree = "<group>"; };
 		0C831D151DF448E50074EC3E /* AAIFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AAIFoundation.framework; path = "../Foundation/build/Debug-iphoneos/AAIFoundation.framework"; sourceTree = "<group>"; };
+		0CA939831E8AFB850092CA46 /* UIKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIKit.swift; sourceTree = "<group>"; };
 		0CDDB5E61D85629900EB8C68 /* UIStoryboardSegue+Identifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIStoryboardSegue+Identifier.swift"; sourceTree = "<group>"; };
 		0CF8DC8F1D2006D60068A152 /* AAIUIKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AAIUIKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CF8DC991D2006D60068A152 /* UIKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UIKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -146,7 +147,6 @@
 		E138966DE2822DB051A1471D /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		E1389759A2657478D1A583C2 /* UnwindActionsTarget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnwindActionsTarget.swift; sourceTree = "<group>"; };
 		E1389A8D43B8C51EE9C46F6A /* UnwindSegueAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnwindSegueAction.swift; sourceTree = "<group>"; };
-		E1389E5CD666FCBE95019DB1 /* Version.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Version.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -439,6 +439,7 @@
 		0CF8DCA91D2008140068A152 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				0CA939831E8AFB850092CA46 /* UIKit.swift */,
 				0CF8DFA21D202BAD0068A152 /* Extensions */,
 				0CF8DCE21D2008140068A152 /* Custom */,
 				E1389DE82893073F5425FA00 /* Version */,
@@ -705,7 +706,6 @@
 			isa = PBXGroup;
 			children = (
 				E13891F09EBD7A2F9E3C5F20 /* Version.c */,
-				E1389E5CD666FCBE95019DB1 /* Version.swift */,
 			);
 			path = Version;
 			sourceTree = "<group>";
@@ -827,6 +827,7 @@
 				0CF8DFB41D2033060068A152 /* UITableViewCell+Extensions.swift in Sources */,
 				0CF8DFB81D20354F0068A152 /* UIViewController+Extensions.swift in Sources */,
 				0CDDB5E71D85629900EB8C68 /* UIStoryboardSegue+Identifier.swift in Sources */,
+				0CA939841E8AFB850092CA46 /* UIKit.swift in Sources */,
 				0CF8DF971D200DA70068A152 /* FetchedResultsTableDataSource.swift in Sources */,
 				0CF8DFB21D2032CD0068A152 /* UITableView+Extensions.swift in Sources */,
 				0CF8DD231D2008140068A152 /* ManagedDocument.swift in Sources */,
@@ -835,7 +836,6 @@
 				0CF8DFAA1D2031AE0068A152 /* UIAlertController+Extensions.swift in Sources */,
 				0CF8DF9F1D2023AC0068A152 /* ActivityIndicatorView.swift in Sources */,
 				E138914E52C1569BF6158DE4 /* Version.c in Sources */,
-				E13897731917891A14D98AFD /* Version.swift in Sources */,
 				E13893F629E14DA207D1AB34 /* UnwindActionsTarget.swift in Sources */,
 				E1389E27E23CB26AC1F5AFE4 /* UnwindSegueAction.swift in Sources */,
 			);
