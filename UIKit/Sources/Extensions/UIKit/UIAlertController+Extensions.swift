@@ -24,7 +24,7 @@ public extension UIAlertController {
         if error.recoveryAttempter != nil {
             fatalError("attempter handling not yet implemented")
         } else {
-            let title = NSLocalizedString("common.confirmation.ok", comment: "OK")
+            let title = String.Localized.Common.Confirmation.ok
             let dismissAction = UIAlertAction(dismissWithTitle: title, alertController: self)
 
             self.addAction(dismissAction);
@@ -34,7 +34,7 @@ public extension UIAlertController {
     public convenience init(infoWithTitle title: String?, message: String?, preferredStyle: UIAlertControllerStyle = .alert) {
         self.init(title: title, message: message, preferredStyle: preferredStyle)
 
-        let title = NSLocalizedString("common.confirmation.ok", comment: "OK")
+        let title = String.Localized.Common.Confirmation.ok
         let dismissAction = UIAlertAction(dismissWithTitle: title, alertController: self)
 
         self.addAction(dismissAction)
@@ -43,11 +43,11 @@ public extension UIAlertController {
     public convenience init(requestSettingsWithTitle title: String?, message: String?, preferredStyle: UIAlertControllerStyle = .alert) {
         self.init(title: title, message: message, preferredStyle: preferredStyle)
 
-        let dismissTitle = NSLocalizedString("common.rejection.cancel", comment: "Cancel")
+        let dismissTitle = String.Localized.Common.Dismissal.cancel
         let dissmissAction = UIAlertAction(dismissWithTitle: dismissTitle, alertController: self)
         self.addAction(dissmissAction)
 
-        let settingsTitle = NSLocalizedString("common.application.settings", comment: "Settings")
+        let settingsTitle = String.Localized.Common.settings
         let url = URL(string: UIApplicationOpenSettingsURLString)!
 
         let completion: (Bool) -> Void = { [weak self] _ in
