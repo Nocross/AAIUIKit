@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0C68E4291E85AE4C00BDAF68 /* UIStoryboard+Name.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C68E4281E85AE4C00BDAF68 /* UIStoryboard+Name.swift */; };
 		0C68E42B1E85B16C00BDAF68 /* AccessibilityIdentification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C68E42A1E85B16C00BDAF68 /* AccessibilityIdentification.swift */; };
 		0C831D161DF448E50074EC3E /* AAICoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C831D141DF448E50074EC3E /* AAICoreData.framework */; };
 		0C831D171DF448E50074EC3E /* AAIFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C831D151DF448E50074EC3E /* AAIFoundation.framework */; };
@@ -75,6 +76,7 @@
 		0C0700DA1DE0D9DA00BB4053 /* iOSlib-Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "iOSlib-Release.xcconfig"; sourceTree = "<group>"; };
 		0C0700DB1DE0D9DA00BB4053 /* iOSlib.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = iOSlib.xcconfig; sourceTree = "<group>"; };
 		0C0700DC1DE0D9DA00BB4053 /* Specific.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Specific.xcconfig; sourceTree = "<group>"; };
+		0C68E4281E85AE4C00BDAF68 /* UIStoryboard+Name.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIStoryboard+Name.swift"; sourceTree = "<group>"; };
 		0C68E42A1E85B16C00BDAF68 /* AccessibilityIdentification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccessibilityIdentification.swift; sourceTree = "<group>"; };
 		0C831D0F1DF446FF0074EC3E /* UIKit-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIKit-Bridging-Header.h"; sourceTree = "<group>"; };
 		0C831D101DF448CD0074EC3E /* AAICoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AAICoreData.framework; path = "../../../DerivedData/Medical-Records/Build/Products/Debug-iphonesimulator/AAICoreData.framework"; sourceTree = "<group>"; };
@@ -693,6 +695,7 @@
 				0CF8DFB51D2033BB0068A152 /* UIView+Extensions.swift */,
 				0CF8DFB71D20354F0068A152 /* UIViewController+Extensions.swift */,
 				0CDDB5E61D85629900EB8C68 /* UIStoryboardSegue+Identifier.swift */,
+				0C68E4281E85AE4C00BDAF68 /* UIStoryboard+Name.swift */,
 				0C68E42A1E85B16C00BDAF68 /* AccessibilityIdentification.swift */,
 				0CA939811E8AFAED0092CA46 /* String+Localized.swift */,
 			);
@@ -830,6 +833,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0C68E4291E85AE4C00BDAF68 /* UIStoryboard+Name.swift in Sources */,
 				0CF8DFB41D2033060068A152 /* UITableViewCell+Extensions.swift in Sources */,
 				0CF8DFB81D20354F0068A152 /* UIViewController+Extensions.swift in Sources */,
 				0CDDB5E71D85629900EB8C68 /* UIStoryboardSegue+Identifier.swift in Sources */,
