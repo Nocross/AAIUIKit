@@ -1,5 +1,5 @@
 #UIKit
-Framework consisting of generic addition to Apple's CoreData Framework.
+Framework consisting of generic addition to Apple's UIKit Framework.
 
 ##Dependencies
 Part of AAIFrameworks repository
