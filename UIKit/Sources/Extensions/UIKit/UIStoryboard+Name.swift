@@ -36,4 +36,14 @@ extension UIStoryboard {
     public convenience init(name: Name, bundle: Bundle? = nil) {
         self.init(name: name.rawValue, bundle: bundle)
     }
+
+    public static var primary: UIStoryboard {
+        return UIStoryboard(name: self.Name.primary)
+    }
+}
+
+extension UIStoryboard.Name {
+    public static var primary: UIStoryboard.Name {
+        return UIStoryboard.Name(rawValue: "Primary")!
+    }
 }

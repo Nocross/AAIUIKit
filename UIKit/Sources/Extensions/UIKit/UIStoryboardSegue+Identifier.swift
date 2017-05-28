@@ -18,33 +18,67 @@
 import UIKit
 
 extension UIStoryboardSegue {
-    public struct Identifier {
-        private init() {}
+    public struct Identifier: Hashable, RawRepresentable {
+        public typealias RawValue = String
+
+        let value: String
+
+        public var rawValue: String {
+            return value
+        }
+
+        public init?(rawValue: RawValue) {
+            value = rawValue
+        }
+
+        public var hashValue: Int {
+            return value.hashValue
+        }
+    }
+
+    public convenience init(identifier: Identifier?, source: UIViewController, destination: UIViewController) {
+        self.init(identifier: identifier?.rawValue, source: source, destination: destination)
+    }
+
+    public convenience init(identifier: Identifier?, source: UIViewController, destination: UIViewController, performHandler: @escaping () -> Swift.Void) {
+        self.init(identifier: identifier?.rawValue, source: source, destination: destination, performHandler: performHandler)
     }
 }
+
+//MARK: -
 
 extension UIStoryboardSegue.Identifier {
-    public static var show: String {
-        return "show"
+    public static var show: UIStoryboardSegue.Identifier {
+        return UIStoryboardSegue.Identifier(rawValue: "show").unsafelyUnwrapped
     }
 
-    public static var present: String {
-        return "present"
+    public static var present: UIStoryboardSegue.Identifier {
+        return UIStoryboardSegue.Identifier(rawValue: "present").unsafelyUnwrapped
     }
 
-    public static var replace: String {
-        return "reaplce"
+    public static var replace: UIStoryboardSegue.Identifier {
+        return UIStoryboardSegue.Identifier(rawValue: "reaplce").unsafelyUnwrapped
     }
 
-    public static var dismiss: String {
-        return "dismiss"
+    public static var dismiss: UIStoryboardSegue.Identifier {
+        return UIStoryboardSegue.Identifier(rawValue: "dismiss").unsafelyUnwrapped
     }
 
-    public static var done: String {
-        return "done"
+    public static var done: UIStoryboardSegue.Identifier {
+        return UIStoryboardSegue.Identifier(rawValue: "done").unsafelyUnwrapped
     }
 
-    public static var discard: String {
-        return "discard"
+    public static var discard: UIStoryboardSegue.Identifier {
+        return UIStoryboardSegue.Identifier(rawValue: "discard").unsafelyUnwrapped
     }
 }
+
+//MARK: -
+
+extension UIViewController {
+    func performSegue(withIdentifier identifier: UIStoryboardSegue.Identifier, sender: Any?) {
+        performSegue(withIdentifier: identifier.rawValue, sender: sender)
+    }
+}
+
+
