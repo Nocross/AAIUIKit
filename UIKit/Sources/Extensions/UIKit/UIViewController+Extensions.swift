@@ -26,4 +26,8 @@ public extension UIViewController {
     public func setHidesBackButton(_ hidesBackButton: Bool, animated: Bool) {
         self.navigationItem.setHidesBackButton(hidesBackButton, animated: animated)
     }
+
+    public func dismiss(animated flag: Bool? = nil, completion: (() -> Swift.Void)? = nil) {
+        self.dismiss(animated: flag ?? UIView.areAnimationsEnabled, completion: completion)
+    }
 }

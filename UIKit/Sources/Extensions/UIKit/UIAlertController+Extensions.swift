@@ -17,41 +17,25 @@
 
 import UIKit
 
+import AAIFoundation
+
 public extension UIAlertController {
-    public convenience init(withError error: NSError, preferredStyle: UIAlertControllerStyle = .alert) {
-        self.init(title: error.localizedFailureReason, message: error.localizedDescription, preferredStyle: preferredStyle)
-
-        if error.recoveryAttempter != nil {
-            fatalError("attempter handling not yet implemented")
-        } else {
-            let title = String.Localized.Common.Confirmation.ok
-            let dismissAction = UIAlertAction(dismissWithTitle: title, alertController: self)
-
-            self.addAction(dismissAction);
-        }
-    }
+    //MARK - Information
 
     public convenience init(infoWithTitle title: String?, message: String?, preferredStyle: UIAlertControllerStyle = .alert) {
         self.init(title: title, message: message, preferredStyle: preferredStyle)
-
-        let title = String.Localized.Common.Confirmation.ok
-        let dismissAction = UIAlertAction(dismissWithTitle: title, alertController: self)
-
-        self.addAction(dismissAction)
     }
+
+    //MARK - Settings
 
     public convenience init(requestSettingsWithTitle title: String?, message: String?, preferredStyle: UIAlertControllerStyle = .alert) {
         self.init(title: title, message: message, preferredStyle: preferredStyle)
-
-        let dismissTitle = String.Localized.Common.Dismissal.cancel
-        let dissmissAction = UIAlertAction(dismissWithTitle: dismissTitle, alertController: self)
-        self.addAction(dissmissAction)
 
         let settingsTitle = String.Localized.Common.settings
         let url = URL(string: UIApplicationOpenSettingsURLString)!
 
         let completion: (Bool) -> Void = { [weak self] _ in
-            self?.dismiss(animated: UIView.areAnimationsEnabled, completion: nil)
+            self?.dismiss()
         }
 
         let handler: (UIAlertAction) -> Void = { _ in
@@ -64,22 +48,31 @@ public extension UIAlertController {
             }
         }
         let settingsAction = UIAlertAction(title: settingsTitle, style: .default, handler: handler)
-        self.addAction(settingsAction)
+        addAction(settingsAction)
+    }
+
+    //MARK: -
+
+    public func addDismissAction(with title: String? = nil, style: UIAlertActionStyle = .cancel) {
+        let title = title ?? String.Localized.Common.Confirmation.ok
+        let dismissAction = UIAlertAction(dismissWithTitle: title, style: style, alertController: self)
+
+        addAction(dismissAction)
     }
 }
 
+//MARK: - UIAlertAction(s)
+
 public extension UIAlertAction {
-    public convenience init(dismissWithTitle title: String, alertController: UIAlertController) {
+    public convenience init(dismissWithTitle title: String, style: UIAlertActionStyle = .cancel, alertController: UIAlertController) {
         let handler = { [weak alert = alertController](action: UIAlertAction) -> Void in
-            guard let this = alert else {
-                return
-            }
+            guard let this = alert else { return }
 
             if this.presentingViewController != nil && !this.isBeingDismissed && !this.isBeingPresented {
-                this .dismiss(animated: UIView.areAnimationsEnabled, completion: nil)
+                this.dismiss(animated: UIView.areAnimationsEnabled, completion: nil)
             }
         }
 
-        self.init(title: title, style: .cancel, handler: handler)
+        self.init(title: title, style: style, handler: handler)
     }
 }
