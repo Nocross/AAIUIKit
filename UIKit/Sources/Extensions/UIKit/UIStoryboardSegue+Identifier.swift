@@ -21,18 +21,14 @@ extension UIStoryboardSegue {
     public struct Identifier: Hashable, RawRepresentable {
         public typealias RawValue = String
 
-        let value: String
-
-        public var rawValue: String {
-            return value
-        }
+        public let rawValue: String
 
         public init?(rawValue: RawValue) {
-            value = rawValue
+            self.rawValue = rawValue
         }
 
         public var hashValue: Int {
-            return value.hashValue
+            return rawValue.hashValue
         }
     }
 
@@ -42,6 +38,15 @@ extension UIStoryboardSegue {
 
     public convenience init(identifier: Identifier?, source: UIViewController, destination: UIViewController, performHandler: @escaping () -> Swift.Void) {
         self.init(identifier: identifier?.rawValue, source: source, destination: destination, performHandler: performHandler)
+    }
+    
+    public var identifierValue: Identifier? {
+        var result: Identifier?
+        if let some = self.identifier {
+            result = Identifier(rawValue: some)
+        }
+        
+        return result
     }
 }
 
@@ -76,7 +81,7 @@ extension UIStoryboardSegue.Identifier {
 //MARK: -
 
 extension UIViewController {
-    func performSegue(withIdentifier identifier: UIStoryboardSegue.Identifier, sender: Any?) {
+    open func performSegue(withIdentifier identifier: UIStoryboardSegue.Identifier, sender: Any?) {
         performSegue(withIdentifier: identifier.rawValue, sender: sender)
     }
 }

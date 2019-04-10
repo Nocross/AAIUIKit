@@ -22,7 +22,7 @@ import UIKit
 import AAIFoundation
 
 extension UIAlertController {
-    public convenience init(withError error: NSError, preferredStyle: UIAlertControllerStyle = .alert, recoveryDelegate: Any? = nil, didRecoverSelector: Selector? = nil, contextInfo: UnsafeMutableRawPointer? = nil) {
+    public convenience init(withError error: NSError, preferredStyle: UIAlertController.Style = .alert, recoveryDelegate: Any? = nil, didRecoverSelector: Selector? = nil, contextInfo: UnsafeMutableRawPointer? = nil) {
 
         self.init(title: nil, message: error.localizedErrorMessage, preferredStyle: preferredStyle)
     }
@@ -50,7 +50,7 @@ extension UIAlertController {
 extension UIAlertAction {
     private typealias attemptRecoveryFunction = @convention(c) (Any, Selector, Error, Int, Any?, Selector?, UnsafeMutableRawPointer?) -> Void
 
-    public convenience init?(recoverFrom error: NSError, optionIndex: Int, recoveryDelegate: Any?, didRecoverSelector: Selector?, contextInfo: UnsafeMutableRawPointer?, alertController: UIAlertController, style: UIAlertActionStyle = .default) {
+    public convenience init?(recoverFrom error: NSError, optionIndex: Int, recoveryDelegate: Any?, didRecoverSelector: Selector?, contextInfo: UnsafeMutableRawPointer?, alertController: UIAlertController, style: UIAlertAction.Style = .default) {
         guard let attempter = error.recoveryAttempter else { return nil }
 
         let selector = #selector(ErrorRecoveryAttemptingDelegate.didRecoverFromPresentedError)

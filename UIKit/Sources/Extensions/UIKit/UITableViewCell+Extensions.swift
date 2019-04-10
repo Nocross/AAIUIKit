@@ -18,94 +18,111 @@
 import UIKit
 import ObjectiveC
 
-public extension UITableViewCell {
+extension UITableViewCell {
     public class var cellIdentifier : String {
         return String(describing: self)
     }
-
-    //MARK:
-
-    @IBOutlet public private(set) weak var labelView: UILabel? {
-        get {
-            var key = self.labelViewAssociationKey
-            return withUnsafePointer(to: &key, { return objc_getAssociatedObject(self, $0) as? UILabel })
-        }
-
+    
+    @IBInspectable
+    public var selectionColor: UIColor? {
+        get { return selectedBackgroundView?.backgroundColor }
         set {
-            var key = self.labelViewAssociationKey
-            withUnsafePointer(to: &key, { objc_setAssociatedObject(self, $0, newValue, .OBJC_ASSOCIATION_ASSIGN) })
+            let view = UIView()
+            selectedBackgroundView = view //NOTE: - should be repaced for color to take effect
+            
+            //NOTE: - dealy to next runloop as UIKit will skip/or prioritze UIAppearance for current one
+            OperationQueue.main.addOperation { view.backgroundColor = newValue }
         }
     }
 
-    private var labelViewAssociationKey: Selector {
-        return #selector(getter: type(of: self).labelView)
+    //MARK: -
+
+    @IBOutlet public private(set) weak var labelView: UILabel? {
+        get {
+            let key = labelViewAssociationKeyPtr
+            return objc_getAssociatedObject(self, key) as? UILabel
+        }
+
+        set {
+            let key = labelViewAssociationKeyPtr
+            objc_setAssociatedObject(self, key, newValue, .OBJC_ASSOCIATION_ASSIGN)
+        }
+    }
+
+    private var labelViewAssociationKeyPtr: UnsafeRawPointer {
+        let selector = #selector(getter: type(of: self).labelView)
+        return unsafeBitCast(selector, to: UnsafeRawPointer.self)
     }
 
     @IBOutlet public private(set) weak var detailLabelView: UILabel? {
         get {
-            var key = self.detailLabelViewAssociationKey
-            return withUnsafePointer(to: &key, { return objc_getAssociatedObject(self, $0) as? UILabel })
+            let key = detailLabelViewAssociationKeyPtr
+            return objc_getAssociatedObject(self, key) as? UILabel
         }
 
         set {
-            var key = self.detailLabelViewAssociationKey
-            withUnsafePointer(to: &key, { objc_setAssociatedObject(self, $0, newValue, .OBJC_ASSOCIATION_ASSIGN) })
+            let key = detailLabelViewAssociationKeyPtr
+            objc_setAssociatedObject(self, key, newValue, .OBJC_ASSOCIATION_ASSIGN)
         }
     }
 
-    private var detailLabelViewAssociationKey: Selector {
-        return #selector(getter: type(of: self).detailLabelView)
+    private var detailLabelViewAssociationKeyPtr: UnsafeRawPointer {
+        let selector = #selector(getter: type(of: self).detailLabelView)
+        return unsafeBitCast(selector, to: UnsafeRawPointer.self)
     }
 
     //MARK:
 
     @IBOutlet public private(set) weak var iconView: UIImageView? {
         get {
-            var key = self.iconViewAssociationKey
-            return withUnsafePointer(to: &key, { return objc_getAssociatedObject(self, $0) as? UIImageView })
+            let key = iconViewAssociationKeyPtr
+            return objc_getAssociatedObject(self, key) as? UIImageView
         }
 
         set {
-            var key = self.iconViewAssociationKey
-            withUnsafePointer(to: &key, { objc_setAssociatedObject(self, $0, newValue, .OBJC_ASSOCIATION_ASSIGN) })
+            let key = iconViewAssociationKeyPtr
+            objc_setAssociatedObject(self, key, newValue, .OBJC_ASSOCIATION_ASSIGN)
         }
     }
 
-    private var iconViewAssociationKey: Selector {
-        return #selector(getter: type(of: self).iconView)
+    private var iconViewAssociationKeyPtr: UnsafeRawPointer {
+        let selector = #selector(getter: type(of: self).iconView)
+        return unsafeBitCast(selector, to: UnsafeRawPointer.self)
     }
 
     @IBOutlet public private(set) weak var indicationView: UIImageView? {
         get {
-            var key = self.indicationViewAssociationKey
-            return withUnsafePointer(to: &key, { return objc_getAssociatedObject(self, $0) as? UIImageView })
+            let key = indicationViewAssociationKeyPtr
+            return objc_getAssociatedObject(self, key) as? UIImageView
         }
 
         set {
-            var key = self.indicationViewAssociationKey
-            withUnsafePointer(to: &key, { objc_setAssociatedObject(self, $0, newValue, .OBJC_ASSOCIATION_ASSIGN) })
+            let key = indicationViewAssociationKeyPtr
+            objc_setAssociatedObject(self, key, newValue, .OBJC_ASSOCIATION_ASSIGN)
         }
     }
 
-    private var indicationViewAssociationKey: Selector {
-        return #selector(getter: type(of: self).indicationView)
+    private var indicationViewAssociationKeyPtr: UnsafeRawPointer {
+        let selector = #selector(getter: type(of: self).indicationView)
+        return unsafeBitCast(selector, to: UnsafeRawPointer.self)
     }
 
     //MARK:
 
     @IBOutlet public private(set) weak var switchView: UISwitch? {
         get {
-            var key = self.switchViewAssociationKey
-            return withUnsafePointer(to: &key, { return objc_getAssociatedObject(self, $0) as? UISwitch })
+            let key = switchViewAssociationKeyPtr
+             return objc_getAssociatedObject(self, key) as? UISwitch
         }
 
         set {
-            var key = self.switchViewAssociationKey
-            withUnsafePointer(to: &key, { objc_setAssociatedObject(self, $0, newValue, .OBJC_ASSOCIATION_ASSIGN) })
+            let key = switchViewAssociationKeyPtr
+            objc_setAssociatedObject(self, key, newValue, .OBJC_ASSOCIATION_ASSIGN)
         }
     }
 
-    private var switchViewAssociationKey: Selector {
-        return #selector(getter: type(of: self).switchView)
+    private var switchViewAssociationKeyPtr: UnsafeRawPointer {
+        let selector = #selector(getter: type(of: self).switchView)
+        return unsafeBitCast(selector, to: UnsafeRawPointer.self)
     }
 }

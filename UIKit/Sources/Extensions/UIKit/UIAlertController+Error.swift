@@ -19,7 +19,7 @@ import UIKit
 extension UIAlertController {
 
     @nonobjc
-    public convenience init(with error: Error, preferredStyle: UIAlertControllerStyle = .alert) {
+    public convenience init(with error: Error, preferredStyle: UIAlertController.Style = .alert) {
         var message: String
 
         if let localized = error as? LocalizedError {
@@ -45,7 +45,7 @@ extension UIAlertController {
 //MARK: -
 
 extension UIAlertAction {
-    public convenience init(recoverFrom error: RecoverableError, optionIndex: Int, title: String? = nil, alertController: UIAlertController, style: UIAlertActionStyle = .default, resultHandler: @escaping (Bool) -> Void) {
+    public convenience init(recoverFrom error: RecoverableError, optionIndex: Int, title: String? = nil, alertController: UIAlertController, style: UIAlertAction.Style = .default, resultHandler: @escaping (Bool) -> Void) {
         let title = title ?? error.recoveryOptions[optionIndex]
         let handler = { [weak alert = alertController](action: UIAlertAction) -> Void in
             guard let this = alert else { return }

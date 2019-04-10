@@ -19,20 +19,20 @@ import UIKit
 
 import AAIFoundation
 
-public extension UIAlertController {
+extension UIAlertController {
     //MARK - Information
 
-    public convenience init(infoWithTitle title: String?, message: String?, preferredStyle: UIAlertControllerStyle = .alert) {
+    public convenience init(infoWithTitle title: String?, message: String?, preferredStyle: UIAlertController.Style = .alert) {
         self.init(title: title, message: message, preferredStyle: preferredStyle)
     }
 
     //MARK - Settings
 
-    public convenience init(requestSettingsWithTitle title: String?, message: String?, preferredStyle: UIAlertControllerStyle = .alert) {
+    public convenience init(requestSettingsWithTitle title: String?, message: String?, preferredStyle: UIAlertController.Style = .alert) {
         self.init(title: title, message: message, preferredStyle: preferredStyle)
 
         let settingsTitle = String.Localized.Common.settings
-        let url = URL(string: UIApplicationOpenSettingsURLString)!
+        let url = URL(string: UIApplication.openSettingsURLString)!
 
         let completion: (Bool) -> Void = { [weak self] _ in
             self?.dismiss()
@@ -53,7 +53,7 @@ public extension UIAlertController {
 
     //MARK: -
 
-    public func addDismissAction(with title: String? = nil, style: UIAlertActionStyle = .cancel) {
+    public func addDismissAction(with title: String? = nil, style: UIAlertAction.Style = .cancel) {
         let title = title ?? String.Localized.Common.Confirmation.ok
         let dismissAction = UIAlertAction(dismissWithTitle: title, style: style, alertController: self)
 
@@ -63,8 +63,8 @@ public extension UIAlertController {
 
 //MARK: - UIAlertAction(s)
 
-public extension UIAlertAction {
-    public convenience init(dismissWithTitle title: String, style: UIAlertActionStyle = .cancel, alertController: UIAlertController) {
+extension UIAlertAction {
+    public convenience init(dismissWithTitle title: String, style: UIAlertAction.Style = .cancel, alertController: UIAlertController) {
         let handler = { [weak alert = alertController](action: UIAlertAction) -> Void in
             guard let this = alert else { return }
 

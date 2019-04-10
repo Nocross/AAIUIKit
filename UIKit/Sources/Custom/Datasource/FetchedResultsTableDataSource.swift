@@ -115,7 +115,7 @@ public class FetchedResultsTableDataSource<FetchResultType: NSFetchRequestResult
 
     // Data manipulation - insert and delete support
 
-    public func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    public func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         assert(tableView === self.tableView, "Called from unregistered table view")
 
         guard let object = fetchedResultsController.object(at: indexPath) as? NSManagedObject else {

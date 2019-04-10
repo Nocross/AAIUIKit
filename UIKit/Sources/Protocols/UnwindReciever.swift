@@ -15,16 +15,23 @@
  */
 
 
-import UIKit
+import Foundation.NSObject
+import UIKit.UIStoryboardSegue;
+
 
 @objc
-public protocol StandardUnwindActions {
+public protocol UnwindReciever {
+    @objc optional func action(forUnwindSegue segue: UIStoryboardSegue)
 
-    @objc optional func action(for unwindSegue: UIStoryboardSegue) -> Void
+    @objc optional func success(forUnwindSegue segue: UIStoryboardSegue)
 
-    @objc optional func done(for unwindSegue: UIStoryboardSegue) -> Void
+    @objc optional func failure(forUnwindSegue segue: UIStoryboardSegue)
 
-    @objc optional func dismiss(for unwindSegue: UIStoryboardSegue) -> Void
+    @objc optional func save(forUnwindSegue segue: UIStoryboardSegue)
 
-    @objc optional func discard(for unwindSegue: UIStoryboardSegue) -> Void
+    @objc optional func update(forUnwindSegue segue: UIStoryboardSegue)
+
+    @objc optional func modify(forUnwindSegue segue: UIStoryboardSegue)
+    
+    @objc optional func delete(forUnwindSegue segue: UIStoryboardSegue)
 }

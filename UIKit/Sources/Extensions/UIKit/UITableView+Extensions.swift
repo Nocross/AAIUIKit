@@ -17,7 +17,7 @@
 
 import UIKit
 
-public extension UITableView {
+extension UITableView {
     @IBOutlet public var tableViewHeader: UIView? {
         get { return self.tableHeaderView }
 

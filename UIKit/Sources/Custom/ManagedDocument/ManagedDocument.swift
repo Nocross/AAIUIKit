@@ -76,9 +76,23 @@ open class ManagedDocument: UIManagedDocument {
 
         try super.configurePersistentStoreCoordinator(for: storeURL, ofType: fileType, modelConfiguration: configuration, storeOptions: storeOptions)
     }
+
+    open override func handleError(_ error: Error, userInteractionPermitted: Bool) {
+//        let nserror = error as NSError
+//
+//        if userInteractionPermitted {
+//            <#code#>
+//        }
+
+        super.handleError(error, userInteractionPermitted: userInteractionPermitted)
+    }
+
+    open override func finishedHandlingError(_ error: Error, recovered: Bool) {
+        super.finishedHandlingError(error, recovered: recovered)
+    }
 }
 
-//MARK: - UIManagedDocument
+//MARK: - PrimaryDocument
 
 extension UIManagedDocument : PrimaryDocument {
 
