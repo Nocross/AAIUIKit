@@ -18,7 +18,7 @@ public final class UIKit {
     private init() {}
 }
 
-public extension UIKit {
+extension UIKit {
     public final class Version {
         private init() {}
 

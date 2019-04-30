@@ -23,7 +23,7 @@ extension UIStoryboardSegue {
 
         public let rawValue: String
 
-        public init?(rawValue: RawValue) {
+        public init(rawValue: RawValue) {
             self.rawValue = rawValue
         }
 
@@ -54,27 +54,27 @@ extension UIStoryboardSegue {
 
 extension UIStoryboardSegue.Identifier {
     public static var show: UIStoryboardSegue.Identifier {
-        return UIStoryboardSegue.Identifier(rawValue: "show").unsafelyUnwrapped
+        return UIStoryboardSegue.Identifier(rawValue: "show")
     }
 
     public static var present: UIStoryboardSegue.Identifier {
-        return UIStoryboardSegue.Identifier(rawValue: "present").unsafelyUnwrapped
+        return UIStoryboardSegue.Identifier(rawValue: "present")
     }
 
     public static var replace: UIStoryboardSegue.Identifier {
-        return UIStoryboardSegue.Identifier(rawValue: "reaplce").unsafelyUnwrapped
+        return UIStoryboardSegue.Identifier(rawValue: "replace")
     }
 
     public static var dismiss: UIStoryboardSegue.Identifier {
-        return UIStoryboardSegue.Identifier(rawValue: "dismiss").unsafelyUnwrapped
+        return UIStoryboardSegue.Identifier(rawValue: "dismiss")
     }
 
     public static var done: UIStoryboardSegue.Identifier {
-        return UIStoryboardSegue.Identifier(rawValue: "done").unsafelyUnwrapped
+        return UIStoryboardSegue.Identifier(rawValue: "done")
     }
 
     public static var discard: UIStoryboardSegue.Identifier {
-        return UIStoryboardSegue.Identifier(rawValue: "discard").unsafelyUnwrapped
+        return UIStoryboardSegue.Identifier(rawValue: "discard")
     }
 }
 

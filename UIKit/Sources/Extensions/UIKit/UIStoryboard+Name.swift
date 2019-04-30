@@ -20,7 +20,7 @@ extension UIStoryboard {
     public struct Name: RawRepresentable, Hashable {
         public private(set) var rawValue: String
 
-        public init?(rawValue: String) {
+        public init(rawValue: String) {
             self.rawValue = rawValue
         }
 
@@ -44,6 +44,6 @@ extension UIStoryboard {
 
 extension UIStoryboard.Name {
     public static var primary: UIStoryboard.Name {
-        return UIStoryboard.Name(rawValue: "Primary")!
+        return UIStoryboard.Name(rawValue: "Primary")
     }
 }

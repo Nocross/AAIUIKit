@@ -64,6 +64,8 @@ extension UIAlertController {
 //MARK: - UIAlertAction(s)
 
 extension UIAlertAction {
+    public typealias Handler = (UIAlertAction) -> Void
+    
     public convenience init(dismissWithTitle title: String, style: UIAlertAction.Style = .cancel, alertController: UIAlertController) {
         let handler = { [weak alert = alertController](action: UIAlertAction) -> Void in
             guard let this = alert else { return }

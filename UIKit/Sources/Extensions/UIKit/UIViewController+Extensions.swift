@@ -17,7 +17,7 @@
 
 import UIKit
 
-public extension UIViewController {
+extension UIViewController {
     @IBInspectable public var hidesBackButton: Bool {
         get { return self.navigationItem.hidesBackButton }
         set { self.navigationItem.setHidesBackButton(newValue, animated: false) }

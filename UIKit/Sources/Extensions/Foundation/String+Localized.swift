@@ -17,13 +17,13 @@
 import Foundation
 import AAIFoundation
 
-public extension String.Localized {
+extension String.Localized {
     public struct Error {
         private init() {}
     }
 }
 
-public extension String.Localized.Error {
+extension String.Localized.Error {
     public static var reasonFormat: String {
         let key = "%s, because %s"
         let comment = "error reason format i.e. \(key)"
@@ -41,7 +41,7 @@ public extension String.Localized.Error {
 
 //MARK: -
 
-public extension String.Localized.Common {
+extension String.Localized.Common {
     public static var settings: String {
         let key = "common.settings"
         let value = "Settings"
@@ -49,7 +49,7 @@ public extension String.Localized.Common {
     }
 }
 
-public extension String.Localized.Common.Confirmation {
+extension String.Localized.Common.Confirmation {
     public static var ok: String {
         let key = "common.confirmation.ok"
         let value = "OK"
@@ -57,7 +57,7 @@ public extension String.Localized.Common.Confirmation {
     }
 }
 
-public extension String.Localized.Common.Dismissal {
+extension String.Localized.Common.Dismissal {
     public static var cancel: String {
         let key = "common.dismissal.cancel"
         let value = "Cancel"

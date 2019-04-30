@@ -16,7 +16,7 @@
 
 import QuartzCore
 
-public extension CALayer {
+extension CALayer {
     public func pauseAnimations() {
         let time = self.convertTime(CACurrentMediaTime(), to: self.superlayer)
         self.speed = 0
