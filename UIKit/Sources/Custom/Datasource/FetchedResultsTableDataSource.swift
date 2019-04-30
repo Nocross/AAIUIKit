@@ -134,6 +134,10 @@ public class FetchedResultsTableDataSource<FetchResultType: NSFetchRequestResult
         case .none:
             debugPrint("commit to tableView \(tableView) with editing style - \(editingStyle)")
             break
+            
+        @unknown default:
+            debugPrint("Uknown NSFetchedResultsChangeType - \(editingStyle)")
+            break
         }
     }
 
@@ -155,7 +159,7 @@ public class FetchedResultsTableDataSource<FetchResultType: NSFetchRequestResult
 
         if !sectionName.isEmpty {
             let index = sectionName.index(after: sectionName.startIndex)
-            result = sectionName.substring(to: index)
+            result = String(sectionName.prefix(upTo: index))
         }
 
         return result
@@ -195,6 +199,9 @@ public class FetchedResultsTableDataSource<FetchResultType: NSFetchRequestResult
             tableView.moveRow(at: indexPath!, to: newIndexPath!)
         case .update:
             tableView.reloadRows(at: [indexPath!], with: .automatic)
+        @unknown default:
+            debugPrint("Uknown NSFetchedResultsChangeType - \(type)")
+            break
         }
     }
 }
