@@ -54,7 +54,7 @@ extension UITableViewCell {
 extension UITableView {
     
     @available(iOS 6.0, *)
-    open func dequeueReusableCell<T: UITableViewCell>(for indexPath: IndexPath, withIdentifier identifier: UITableViewCell.ReuseIdentifier = T.reuseIdentifier) -> T {
+    open func dequeueReusableCell<T: CellClass>(for indexPath: IndexPath, withIdentifier identifier: UITableViewCell.ReuseIdentifier = T.reuseIdentifier) -> T {
         
         let result = dequeueReusableCell(withIdentifier: identifier.rawValue, for: indexPath) as T
         
@@ -72,7 +72,7 @@ extension UITableView {
     }
     
     @available(iOS 6.0, *)
-    open func register<T: UITableViewCell>(_ cellClass: T.Type, forCellReuseIdentifier identifier: UITableViewCell.ReuseIdentifier = T.reuseIdentifier) {
+    open func register<T: CellClass>(_ cellClass: T.Type, forCellReuseIdentifier identifier: UITableViewCell.ReuseIdentifier = T.reuseIdentifier) {
         register(cellClass, forHeaderFooterViewReuseIdentifier: identifier.rawValue)
     }
 }

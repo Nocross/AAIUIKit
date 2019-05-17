@@ -18,6 +18,10 @@
 import UIKit
 
 extension UITableView {
+    public typealias CellClass = UITableViewCell
+    
+    public typealias ReusableHeaderFooterViewClass = UITableViewHeaderFooterView
+    
     @IBOutlet public var tableViewHeader: UIView? {
         get { return self.tableHeaderView }
 
@@ -38,7 +42,7 @@ extension UITableView {
     }
     
     @available(iOS 6.0, *)
-    open func dequeueReusableCell<T: UITableViewCell>(withIdentifier identifier: String, for indexPath: IndexPath) -> T {
+    open func dequeueReusableCell<T: CellClass>(withIdentifier identifier: String, for indexPath: IndexPath) -> T {
         
         guard let result = dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? T else { preconditionFailure("Cell type mismatch") }
         
@@ -46,7 +50,7 @@ extension UITableView {
     }
     
     @available(iOS 6.0, *)
-    open func dequeueReusableHeaderFooterView<T: UITableViewHeaderFooterView>(withIdentifier identifier: String) -> T {
+    open func dequeueReusableHeaderFooterView<T: ReusableHeaderFooterViewClass>(withIdentifier identifier: String) -> T {
         guard let result = dequeueReusableHeaderFooterView(withIdentifier: identifier) as? T else { preconditionFailure("View type mismatch") }
         
         return result
