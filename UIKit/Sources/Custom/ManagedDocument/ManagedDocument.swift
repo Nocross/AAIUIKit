@@ -35,7 +35,7 @@ open class ManagedDocument: UIManagedDocument {
 
     internal let _managedObjectModel : NSManagedObjectModel!
 
-    open class func primaryDocument() -> ManagedDocument {
+    open class var primary: UIManagedDocument {
         return _primaryDocument
     }
 
@@ -60,7 +60,9 @@ open class ManagedDocument: UIManagedDocument {
     }
 
     open override func configurePersistentStoreCoordinator(for storeURL: URL, ofType fileType: String, modelConfiguration configuration: String?, storeOptions: [AnyHashable : Any]? = nil) throws {
-        var options = NSPersistentStore.defaultOptions(forStoreType: fileType)
+        
+        let storeType = self.persistentStoreType(forFileType: fileType)
+        var options = NSPersistentStore.defaultOptions(forStoreType: storeType)
 
         if var userOptions : [AnyHashable : Any] = storeOptions, let defaultOptions = options {
             /* add missing options from default */
@@ -90,26 +92,23 @@ open class ManagedDocument: UIManagedDocument {
     open override func finishedHandlingError(_ error: Error, recovered: Bool) {
         super.finishedHandlingError(error, recovered: recovered)
     }
-}
-
-//MARK: - PrimaryDocument
-
-extension UIManagedDocument : PrimaryDocument {
-
+    
+    //MARK: - PrimaryDocument
+    
     open class func primaryDocumentName() -> String {
         return "primaryDocument"
     }
-
+    
     open class func primaryStoreURL() -> URL {
         let documentsURL = FileManager.default.userDocumentsDirectoryURL
         return URL(fileURLWithPath: self.primaryDocumentName(), isDirectory: false, relativeTo: documentsURL)
     }
-
+    
     open class func primaryModelName() -> String? {
         let bundle = Bundle.main
-
+        
         let result = bundle.object(forInfoDictionaryKey: SPXModelNameKey) as? String
-
+        
         return result
     }
 }
