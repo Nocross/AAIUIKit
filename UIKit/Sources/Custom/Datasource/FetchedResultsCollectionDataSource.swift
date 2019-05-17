@@ -261,11 +261,11 @@ public class FetchedResultsCollectionDataSource<FetchResultType, CallbackType>: 
         
         switch type {
         case .insert:
-            collectionView.insertItems(at: [indexPath!])
+            collectionView.insertItems(at: [newIndexPath!])
         case .delete:
             collectionView.deleteItems(at: [indexPath!])
         case .move:
-            collectionView.moveItem(at: indexPath!, to: indexPath!)
+            collectionView.moveItem(at: indexPath!, to: newIndexPath!)
         case .update:
             collectionView.reloadItems(at: [indexPath!])
         @unknown default:
