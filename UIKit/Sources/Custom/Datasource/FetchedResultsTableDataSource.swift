@@ -24,19 +24,24 @@ public class FetchedResultsTableDataSource<FetchResultType: NSFetchRequestResult
 
     public typealias CellDequeueBlock = (_ tableView: UITableView, _ indexPath: IndexPath, _ object: FetchResultType) -> UITableViewCell
     public typealias InsertionBlock = (_ tableView: UITableView, _ indexPath: IndexPath) -> FetchResultType
+    public typealias ReloadBlock = (_ tableView: UITableView, _ indexPath: IndexPath,  _ object: FetchResultType) -> Bool
 
     public private(set) weak var tableView: UITableView?
     public let fetchedResultsController: NSFetchedResultsController<FetchResultType>
 
     public let dequeueBlock: CellDequeueBlock
     public let insertionBlock: InsertionBlock?
+    public let shouldReloadBlock: ReloadBlock?
+    
+    private var batch: [() -> Void]?
 
-    public init(withTableView tableView: UITableView, fetchedResultsController frc: NSFetchedResultsController<FetchResultType>, cellDequeueBlock: @escaping CellDequeueBlock, insertionBlock: InsertionBlock? = nil) {
+    public init(withTableView tableView: UITableView, fetchedResultsController frc: NSFetchedResultsController<FetchResultType>, cellDequeueBlock: @escaping CellDequeueBlock, insertionBlock: InsertionBlock? = nil, shouldReloadBlock: ReloadBlock? = nil) {
         self.tableView = tableView
 
         fetchedResultsController = frc
         dequeueBlock = cellDequeueBlock
         self.insertionBlock = insertionBlock
+        self.shouldReloadBlock = shouldReloadBlock
     }
 
     public func performFetch() throws {
@@ -147,14 +152,27 @@ public class FetchedResultsTableDataSource<FetchResultType: NSFetchRequestResult
     //MARK: - NSFetchedResultsControllerDelegate
 
     public func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        tableView?.beginUpdates()
+        precondition(controller == fetchedResultsController)
+        precondition(batch == nil)
+        
+        batch = []
     }
 
     public func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        tableView?.endUpdates()
+        precondition(controller == fetchedResultsController)
+        
+        guard let batch = batch else { preconditionFailure() }
+        
+        let isRevelant = !batch.isEmpty
+        if isRevelant {
+            let block = { batch.forEach { $0() } }
+            process(batchUpdates: block, for: controller)
+        }
+        self.batch = nil
     }
 
     public func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, sectionIndexTitleForSectionName sectionName: String) -> String? {
+        
         var result: String?
 
         if !sectionName.isEmpty {
@@ -172,16 +190,20 @@ public class FetchedResultsTableDataSource<FetchResultType: NSFetchRequestResult
         }
 
         let sections = IndexSet(integer: sectionIndex)
+        
+        var block: () -> Void
 
         switch type {
         case .insert:
-            tableView.insertSections(sections, with: .automatic)
+            block = { tableView.insertSections(sections, with: .automatic) }
         case .delete:
-            tableView.deleteSections(sections, with: .automatic)
+            block = { tableView.deleteSections(sections, with: .automatic) }
         default:
             preconditionFailure("Invalid section change type - \(type)")
             break
         }
+        
+        batch?.append(block)
     }
 
     public func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
@@ -189,19 +211,70 @@ public class FetchedResultsTableDataSource<FetchResultType: NSFetchRequestResult
             assertionFailure()
             return
         }
+        
+        var block: (() -> Void)?
 
         switch type {
         case .insert:
-            tableView.insertRows(at: [newIndexPath!], with: .automatic)
+            block = { tableView.insertRows(at: [newIndexPath!], with: .automatic) }
         case .delete:
-            tableView.deleteRows(at: [indexPath!], with: .automatic)
+            block = { tableView.deleteRows(at: [indexPath!], with: .automatic) }
         case .move:
-            tableView.moveRow(at: indexPath!, to: newIndexPath!)
+            block = { tableView.moveRow(at: indexPath!, to: newIndexPath!) }
         case .update:
-            tableView.reloadRows(at: [indexPath!], with: .automatic)
+            let shouldReload: Bool
+            if let block = shouldReloadBlock  {
+                let object = anObject as! FetchResultType
+                shouldReload = block(tableView, indexPath!, object)
+            } else {
+                shouldReload = true
+            }
+            
+            if shouldReload {
+                block = { tableView.reloadRows(at: [indexPath!], with: .automatic) }
+            }
+            
         @unknown default:
             debugPrint("Uknown NSFetchedResultsChangeType - \(type)")
             break
+        }
+        
+        if let some = block {
+            batch?.append(some)
+        }
+    }
+    
+    //MARK: -
+    
+    private func process(batchUpdates: @escaping () -> Void, for controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        let tableView = self.tableView
+        let callout = {
+            if #available(iOS 11.0, *) {
+                let handler: ((Bool) -> Void)? = nil
+                tableView?.performBatchUpdates(batchUpdates, completion: handler)
+            } else {
+                tableView?.beginUpdates()
+                
+                batchUpdates()
+                
+                tableView?.endUpdates()
+            }
+        }
+        
+        let concurrencyType = controller.managedObjectContext.concurrencyType
+        let isMainQueue: Bool
+        if #available(iOS 9.0, *) {
+            let isRelevant = concurrencyType == .mainQueueConcurrencyType
+            isMainQueue = isRelevant && Thread.isMainThread
+        } else {
+            let isRelevant = concurrencyType == .mainQueueConcurrencyType || concurrencyType == .confinementConcurrencyType
+            isMainQueue = isRelevant && Thread.isMainThread
+        }
+        
+        if isMainQueue {
+            callout()
+        } else {
+            OperationQueue.main.addOperation(callout)
         }
     }
 }
