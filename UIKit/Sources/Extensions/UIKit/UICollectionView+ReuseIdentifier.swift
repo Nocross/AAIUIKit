@@ -17,10 +17,22 @@
 import UIKit
 
 extension UICollectionView {
+    open func register<T: CellClass>(_ cellClass: T.Type, forCellWithReuseIdentifier identifier: ReuseIdentifier) {
+        register(cellClass, forCellWithReuseIdentifier: identifier.rawValue)
+    }
+    
+    open func register(_ nib: UINib?, forCellWithReuseIdentifier identifier: ReuseIdentifier) {
+        register(nib, forCellWithReuseIdentifier: identifier.rawValue)
+    }
+}
+
+//MARK: -
+
+extension UICollectionView {
     public typealias ReuseIdentifier = UICollectionReusableView.ReuseIdentifier
     
-    open func dequeueReusableCell(withReuseIdentifier identifier: ReuseIdentifier, for indexPath: IndexPath) -> UICollectionViewCell {
-        return dequeueReusableCell(withReuseIdentifier: identifier.rawValue, for: indexPath)
+    open func dequeueReusableCell<T: CellClass>(withReuseIdentifier identifier: ReuseIdentifier = T.reuseIdentifier, for indexPath: IndexPath) -> T {
+        return dequeueReusableCell(withReuseIdentifier: identifier.rawValue, for: indexPath) as T
     }
     
     open func dequeueReusableSupplementaryView(ofKind elementKind: String, withReuseIdentifier identifier: ReuseIdentifier, for indexPath: IndexPath) -> UICollectionReusableView {
@@ -28,36 +40,29 @@ extension UICollectionView {
     }
 }
 
-
 //MARK: -
 
 extension UICollectionReusableView {
-    public struct ReuseIdentifier: RawRepresentable {
+    public struct ReuseIdentifier: ReuseIdentifierProtocol {
         public typealias RawValue = String
         
         private init() { rawValue = "" }
         
-        public init?(rawValue: RawValue) {
+        public init(rawValue: RawValue) {
             self.rawValue = rawValue
         }
         
         public let rawValue: RawValue
     }
     
-    public class var reuseIdentifier: ReuseIdentifier? {
+    public class var reuseIdentifier: ReuseIdentifier {
         let value = reuseIdentifierString
         
-        return value == nil ? nil : ReuseIdentifier(rawValue: value!)
+        return ReuseIdentifier(rawValue: value)
     }
     
     @objc
-    public class var reuseIdentifierString: String? {
-        return self === UICollectionReusableView.self ? nil : String(describing: self)
-    }
-}
-
-extension UICollectionViewCell {
-    public class override var reuseIdentifierString: String? {
-        return self === UICollectionViewCell.self ? nil : String(describing: self)
+    public class var reuseIdentifierString: String {
+        return String(describing: self)
     }
 }
