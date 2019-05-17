@@ -48,7 +48,7 @@ extension UIAlertAction {
     public convenience init(recoverFrom error: RecoverableError, optionIndex: Int, title: String? = nil, alertController: UIAlertController, style: UIAlertAction.Style = .default, resultHandler: @escaping (Bool) -> Void) {
         let title = title ?? error.recoveryOptions[optionIndex]
         let handler = { [weak alert = alertController](action: UIAlertAction) -> Void in
-            guard let this = alert else { return }
+            guard let this = alert else { assertionFailure("Orphan/Leaking alert action - \(action)");  return }
 
             if this.presentingViewController != nil && !this.isBeingDismissed && !this.isBeingPresented {
                 error.attemptRecovery(optionIndex: optionIndex, resultHandler: resultHandler)
