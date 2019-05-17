@@ -16,19 +16,16 @@
 
 
 import UIKit
+import AAIFoundation
 
 extension UIStoryboardSegue {
-    public struct Identifier: Hashable, RawRepresentable {
+    public struct Identifier: StringRepresentableIdentifierProtocol {
         public typealias RawValue = String
 
-        public let rawValue: String
+        public let rawValue: RawValue
 
         public init(rawValue: RawValue) {
             self.rawValue = rawValue
-        }
-
-        public var hashValue: Int {
-            return rawValue.hashValue
         }
     }
 
