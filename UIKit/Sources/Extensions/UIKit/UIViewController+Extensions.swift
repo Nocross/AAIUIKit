@@ -19,15 +19,19 @@ import UIKit
 
 extension UIViewController {
     @IBInspectable public var hidesBackButton: Bool {
-        get { return self.navigationItem.hidesBackButton }
-        set { self.navigationItem.setHidesBackButton(newValue, animated: false) }
+        get { return navigationItem.hidesBackButton }
+        set { navigationItem.setHidesBackButton(newValue, animated: false) }
     }
 
     public func setHidesBackButton(_ hidesBackButton: Bool, animated: Bool) {
-        self.navigationItem.setHidesBackButton(hidesBackButton, animated: animated)
+        navigationItem.setHidesBackButton(hidesBackButton, animated: animated)
     }
 
     public func dismiss(animated flag: Bool? = nil, completion: (() -> Swift.Void)? = nil) {
-        self.dismiss(animated: flag ?? UIView.areAnimationsEnabled, completion: completion)
+        dismiss(animated: flag ?? UIView.areAnimationsEnabled, completion: completion)
+    }
+    
+    public func present(viewController: UIViewController, animated: Bool? = nil , completion: (() -> Void)? = nil) {
+        present(viewController, animated: animated ?? UIView.areAnimationsEnabled, completion: completion)
     }
 }
