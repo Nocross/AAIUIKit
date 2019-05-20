@@ -33,7 +33,7 @@ open class ManagedDocument: UIManagedDocument {
 
     private static let _primaryDocument = ManagedDocument(fileURL: ManagedDocument.primaryStoreURL())
 
-    internal let _managedObjectModel : NSManagedObjectModel!
+    private let _managedObjectModel : NSManagedObjectModel?
 
     open class var primary: UIManagedDocument {
         return _primaryDocument
@@ -76,7 +76,7 @@ open class ManagedDocument: UIManagedDocument {
             options = userOptions
         }
 
-        try super.configurePersistentStoreCoordinator(for: storeURL, ofType: fileType, modelConfiguration: configuration, storeOptions: storeOptions)
+        try super.configurePersistentStoreCoordinator(for: storeURL, ofType: fileType, modelConfiguration: configuration, storeOptions: options)
     }
 
     open override func handleError(_ error: Error, userInteractionPermitted: Bool) {
@@ -101,7 +101,7 @@ open class ManagedDocument: UIManagedDocument {
     
     open class func primaryStoreURL() -> URL {
         let documentsURL = FileManager.default.userDocumentsDirectoryURL
-        return URL(fileURLWithPath: self.primaryDocumentName(), isDirectory: false, relativeTo: documentsURL)
+        return URL(fileURLWithPath: self.primaryDocumentName(), relativeTo: documentsURL)
     }
     
     open class func primaryModelName() -> String? {

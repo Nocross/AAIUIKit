@@ -842,7 +842,6 @@
 				TargetAttributes = {
 					0CF8DC8E1D2006D60068A152 = {
 						CreatedOnToolsVersion = 8.0;
-						DevelopmentTeam = NYN6E8D8HF;
 						DevelopmentTeamName = "Andrey Ilskiy (Personal Team)";
 						LastSwiftMigration = 0800;
 						ProvisioningStyle = Automatic;
@@ -971,6 +970,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0C0700CE1DE0D9DA00BB4053 /* iOS-Framework-Swift-Embedded-Bridged-Debug.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = "";
 			};
 			name = Debug;
 		};
@@ -978,6 +978,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0C0700CF1DE0D9DA00BB4053 /* iOS-Framework-Swift-Embedded-Bridged-Release.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = "";
 			};
 			name = Release;
 		};
