@@ -28,6 +28,8 @@
 		E138914E52C1569BF6158DE4 /* Version.c in Sources */ = {isa = PBXBuildFile; fileRef = E13891F09EBD7A2F9E3C5F20 /* Version.c */; };
 		E1389757523F72C2440F46C3 /* UIAlertController+Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1389CC3ACB7503C43D3EB10 /* UIAlertController+Error.swift */; };
 		E13899DC01E36E4629F749E2 /* UIAlertController+NSError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13893001671CD16653023DD /* UIAlertController+NSError.swift */; };
+		E314014022972D1100D6F1B1 /* FetchedResultsPickerDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = E314013F22972D1100D6F1B1 /* FetchedResultsPickerDataSource.swift */; };
+		E31401482299875200D6F1B1 /* FetchedEntityTableDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31401472299875200D6F1B1 /* FetchedEntityTableDataSource.swift */; };
 		E332A499227E210A004D1B0E /* ManagedContextProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E332A498227E210A004D1B0E /* ManagedContextProvider.swift */; };
 		E36C7DDD2285BEAC0072705E /* UITextView+UIAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = E36C7DDC2285BEAC0072705E /* UITextView+UIAppearance.swift */; };
 		E37740972271ED3D00BBFD0F /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37740962271ED3D00BBFD0F /* UIImage+Extensions.swift */; };
@@ -171,6 +173,8 @@
 		E138966DE2822DB051A1471D /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		E1389759A2657478D1A583C2 /* UnwindReciever.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnwindReciever.swift; sourceTree = "<group>"; };
 		E1389CC3ACB7503C43D3EB10 /* UIAlertController+Error.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIAlertController+Error.swift"; sourceTree = "<group>"; };
+		E314013F22972D1100D6F1B1 /* FetchedResultsPickerDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchedResultsPickerDataSource.swift; sourceTree = "<group>"; };
+		E31401472299875200D6F1B1 /* FetchedEntityTableDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchedEntityTableDataSource.swift; sourceTree = "<group>"; };
 		E332A498227E210A004D1B0E /* ManagedContextProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedContextProvider.swift; sourceTree = "<group>"; };
 		E36C7DDC2285BEAC0072705E /* UITextView+UIAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextView+UIAppearance.swift"; sourceTree = "<group>"; };
 		E37740962271ED3D00BBFD0F /* UIImage+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extensions.swift"; sourceTree = "<group>"; };
@@ -506,6 +510,8 @@
 				0CF8DF961D200DA70068A152 /* FetchedResultsTableDataSource.swift */,
 				E3AC785A2269D3F6002CE009 /* FetchedResultsCollectionDataSource.swift */,
 				E3AC785E226A3407002CE009 /* SimplifiedFetchedResultsCollectionDataSource.swift */,
+				E314013F22972D1100D6F1B1 /* FetchedResultsPickerDataSource.swift */,
+				E31401472299875200D6F1B1 /* FetchedEntityTableDataSource.swift */,
 			);
 			path = Datasource;
 			sourceTree = "<group>";
@@ -900,6 +906,7 @@
 				E3B85462227B047200276093 /* UICollectionView+Extensions.swift in Sources */,
 				E37740972271ED3D00BBFD0F /* UIImage+Extensions.swift in Sources */,
 				E38D095A22842657002CA23C /* CGSize+Extensions.swift in Sources */,
+				E31401482299875200D6F1B1 /* FetchedEntityTableDataSource.swift in Sources */,
 				E3B85456227A3BF300276093 /* NibProvider.swift in Sources */,
 				E38D095822842636002CA23C /* CGRect+Extensions.swift in Sources */,
 				0C64974E1EDB3FBD00C22BBB /* UnwindReciever.swift in Sources */,
@@ -928,6 +935,7 @@
 				0CF8DD231D2008140068A152 /* ManagedDocument.swift in Sources */,
 				0CF8DFA51D202BE20068A152 /* CALayer+Extensions.swift in Sources */,
 				0C64974D1EDB3FB200C22BBB /* String+Localized.swift in Sources */,
+				E314014022972D1100D6F1B1 /* FetchedResultsPickerDataSource.swift in Sources */,
 				E3E75452226B788100E4D9B2 /* UITableViewHeaderFooterView+Extensions.swift in Sources */,
 				E138914E52C1569BF6158DE4 /* Version.c in Sources */,
 			);
