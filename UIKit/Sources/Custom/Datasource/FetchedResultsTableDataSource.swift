@@ -20,6 +20,7 @@ import UIKit
 
 import AAICoreData
 
+@available(iOS 3.0, *)
 public class FetchedResultsTableDataSource<FetchResultType: NSFetchRequestResult>: NSObject, NSFetchedResultsControllerDelegate, UITableViewDataSource {
 
     public typealias CellDequeueBlock = (_ tableView: UITableView, _ indexPath: IndexPath, _ object: FetchResultType) -> UITableViewCell
@@ -50,6 +51,34 @@ public class FetchedResultsTableDataSource<FetchResultType: NSFetchRequestResult
         }
 
         try self.fetchedResultsController.performFetch()
+    }
+    
+    //MARK: -
+    
+    // returns nil if cell is not visible
+    open func object(for cell: UITableViewCell) -> FetchResultType? {
+        var result: FetchResultType?
+        
+        // returns nil if cell is not visible
+        if let indexPath = tableView?.indexPath(for: cell) {
+            result = object(at: indexPath)
+        }
+        
+        return result
+    }
+    
+    //MARK: -
+    
+    open var fetchedObjects: [FetchResultType]? {
+        return fetchedResultsController.fetchedObjects
+    }
+    
+    open func object(at indexPath: IndexPath) -> FetchResultType {
+        return fetchedResultsController.object(at: indexPath)
+    }
+    
+    open func indexPath(forObject object: FetchResultType) -> IndexPath? {
+        return fetchedResultsController.indexPath(forObject: object)
     }
 
     //MARK: - UITableViewDataSource
