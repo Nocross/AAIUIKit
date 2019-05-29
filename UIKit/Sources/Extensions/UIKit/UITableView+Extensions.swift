@@ -42,16 +42,16 @@ extension UITableView {
     }
     
     @available(iOS 6.0, *)
-    open func dequeueReusableCell<T: CellClass>(withIdentifier identifier: String, for indexPath: IndexPath) -> T {
+    open func dequeueReusableCell<Cell>(withIdentifier identifier: String, for indexPath: IndexPath) -> Cell where Cell : CellClass {
         
-        guard let result = dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? T else { preconditionFailure("Cell type mismatch") }
+        guard let result = dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? Cell else { preconditionFailure("Cell type mismatch") }
         
         return result
     }
     
     @available(iOS 6.0, *)
-    open func dequeueReusableHeaderFooterView<T: ReusableHeaderFooterViewClass>(withIdentifier identifier: String) -> T {
-        guard let result = dequeueReusableHeaderFooterView(withIdentifier: identifier) as? T else { preconditionFailure("View type mismatch") }
+    open func dequeueReusableHeaderFooterView<ReusableHeaderFooterView>(withIdentifier identifier: String) -> ReusableHeaderFooterView where ReusableHeaderFooterView : ReusableHeaderFooterViewClass {
+        guard let result = dequeueReusableHeaderFooterView(withIdentifier: identifier) as? ReusableHeaderFooterView else { preconditionFailure("View type mismatch") }
         
         return result
     }

@@ -73,12 +73,16 @@ extension UIStoryboardSegue.Identifier {
     public static var discard: UIStoryboardSegue.Identifier {
         return UIStoryboardSegue.Identifier(rawValue: "discard")
     }
+    
+    public static var cancel: UIStoryboardSegue.Identifier {
+        return UIStoryboardSegue.Identifier(rawValue: "cancel")
+    }
 }
 
 //MARK: -
 
 extension UIViewController {
-    open func performSegue(withIdentifier identifier: UIStoryboardSegue.Identifier, sender: Any?) {
+    public func performSegue(withIdentifier identifier: UIStoryboardSegue.Identifier, sender: Any?) {
         performSegue(withIdentifier: identifier.rawValue, sender: sender)
     }
 }
