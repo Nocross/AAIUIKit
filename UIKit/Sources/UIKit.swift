@@ -21,7 +21,8 @@ public final class UIKit {
 extension UIKit {
     public final class Version {
         private init() {}
-
+        
+#if DEBUG
         public static var number: Double {
             return getUIKitVersionNumber()
         }
@@ -29,5 +30,6 @@ extension UIKit {
         public static var string: String {
             return String(cString: getUIKitVersionString())
         }
+#endif /* DEBUG */
     }
 }
