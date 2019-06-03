@@ -199,9 +199,15 @@ public class FetchedResultsCollectionDataSource<FetchResultType, CallbackType>: 
     }
     
     public func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        
+        let collectionView = self.collectionView
         let completion: ((Bool) -> Void)?
         #if DEBUG
-        completion = { assert($0) }
+        completion = {
+            if !$0, let some = collectionView {
+                debugPrint("Animation are interrupted for updates of collection view  - \(some)")
+            }
+        }
         #else
         completion = nil
         #endif

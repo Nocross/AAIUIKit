@@ -85,6 +85,10 @@ extension UIViewController {
     public func performSegue(withIdentifier identifier: UIStoryboardSegue.Identifier, sender: Any?) {
         performSegue(withIdentifier: identifier.rawValue, sender: sender)
     }
+    
+    public func shouldPerformSegue(withIdentifier identifier: UIStoryboardSegue.Identifier, sender: Any?) -> Bool {
+        return shouldPerformSegue(withIdentifier: identifier.rawValue, sender: sender)
+    }
 }
 
 

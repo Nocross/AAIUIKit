@@ -51,6 +51,26 @@ extension UITableViewCell {
 
 //MARK: -
 
+extension UITableViewCell.ReuseIdentifier {
+    public static var basic: UITableViewCell.ReuseIdentifier {
+        return UITableViewCell.ReuseIdentifier(rawValue: "Basic")
+    }
+    
+    public static var rightDetail: UITableViewCell.ReuseIdentifier {
+        return UITableViewCell.ReuseIdentifier(rawValue: "Right Detail")
+    }
+    
+    public static var leftDetail: UITableViewCell.ReuseIdentifier {
+        return UITableViewCell.ReuseIdentifier(rawValue: "Left Detail")
+    }
+    
+    public static var subtitle: UITableViewCell.ReuseIdentifier {
+        return UITableViewCell.ReuseIdentifier(rawValue: "Subtitle")
+    }
+}
+
+//MARK: -
+
 extension UITableView {
     
     @available(iOS 6.0, *)

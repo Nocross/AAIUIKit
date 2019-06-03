@@ -114,6 +114,25 @@ public enum PropertyDescriptionKind {
     case attribute(attribute: NSAttributeDescription, value: NSAttributeDescription.AttributeType?)
     case relationship(relationship: NSRelationshipDescription, value: NSRelationshipDescription.Plurality?)
     
+    public func getAttribute() throws -> (value: NSAttributeDescription.AttributeType?, description: NSAttributeDescription) {
+        
+        switch self {
+        case .attribute(let description, let value):
+            return (value, description)
+        default:
+            preconditionFailure()
+        }
+    }
+    
+    public func getRelationship() throws -> (value: NSRelationshipDescription.Plurality?, description: NSRelationshipDescription) {
+        switch self {
+        case .relationship(let description, let value):
+            return (value, description)
+        default:
+            preconditionFailure()
+        }
+    }
+    
     fileprivate static func make(from property: NSPropertyDescription, value: Any?) -> PropertyDescriptionKind {
         let result: PropertyDescriptionKind
         
@@ -169,6 +188,8 @@ open class FetchedEntityTableDataSource<ManagedType: NSManagedObject>: NSObject,
 //    private let properties: [NSPropertyDescription]
     
     private var batch: [() -> Void]?
+    
+    private var keyPaths = [String]()
     
     public init(withTableView tableView: UITableView, managedObjectID objectID: NSManagedObjectID, managedObjectContext: NSManagedObjectContext, cellDequeueStrategy: @escaping CellDequeueStrategy, shouldReloadStrategy: ReloadStrategy? = nil) {
         
@@ -476,38 +497,17 @@ open class FetchedEntityTableDataSource<ManagedType: NSManagedObject>: NSObject,
                 super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
             }
         }
-//        guard let context = context else { callout(); return }
+        
         guard let keyPath = keyPath else { return }
         
         guard let object = fetchedResultsController.fetchedObjects?.first else { return }
         guard let property = object.entity.propertiesByName[keyPath] else { return }
         
-        if let indexPath = indexPath(forProperty: property) {
-            shouldInvoke = false
-            
-            guard let tableView = self.tableView else { preconditionFailure() }
-            
-            let shouldReload: Bool
-            if let strategy = shouldReloadStrategy  {
-                let value = change?[NSKeyValueChangeKey.newKey]
-                let kind = PropertyDescriptionKind.make(from: property, value: value)
-                
-                shouldReload = strategy(tableView, indexPath, kind)
-            } else {
-                shouldReload = true
-            }
-            
-            var block: (() -> Void)?
-            
-            if shouldReload {
-                block = { tableView.reloadRows(at: [indexPath], with: .automatic) }
-            }
-            
-            if let some = block {
-                batch?.append(some)
-            }
+        
+        keyPaths.append(property.name)
+        shouldInvoke = false
+        
         }
-    }
     
     //MARK: - NSFetchedResultsControllerDelegate
     
@@ -592,9 +592,36 @@ open class FetchedEntityTableDataSource<ManagedType: NSManagedObject>: NSObject,
 //            block = { tableView.insertRows(at: [newIndexPath!], with: .automatic) }
             fallthrough
         case .update:
-            break
-//            let object = anObject as! ManagedType
-//
+            let object = anObject as! ManagedType
+            
+            let entity = object.entity
+            
+            for name in keyPaths {
+                guard let property = entity.propertiesByName[name] else { continue }
+                guard let indexPath = self.indexPath(forProperty: property) else { continue }
+                
+                let shouldReload: Bool
+                
+                if let strategy = shouldReloadStrategy  {
+                    let value = object.value(forKey: name)
+                    let kind = PropertyDescriptionKind.make(from: property, value: value)
+                    
+                    shouldReload = strategy(tableView, indexPath, kind)
+                } else {
+                    shouldReload = true
+                }
+                
+                var block: (() -> Void)?
+                
+                if shouldReload {
+                    block = { tableView.reloadRows(at: [indexPath], with: .automatic) }
+                }
+                
+                if let some = block {
+                    batch?.append(some)
+                }
+            }
+
 //            let changes = changedPropertiesForCurrentEvent(in: object)
 //            guard changes.isEmpty else { return }
 //
