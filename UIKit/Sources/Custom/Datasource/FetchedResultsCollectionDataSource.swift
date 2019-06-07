@@ -199,19 +199,18 @@ public class FetchedResultsCollectionDataSource<FetchResultType, CallbackType>: 
     }
     
     public func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        
-        let collectionView = self.collectionView
-        let completion: ((Bool) -> Void)?
-        #if DEBUG
-        completion = {
-            if !$0, let some = collectionView {
-                debugPrint("Animation are interrupted for updates of collection view  - \(some)")
-            }
-        }
-        #else
-        completion = nil
-        #endif
-        let updates: () -> Void = { [unowned self] in self.uncommitedUpdates?.forEach { $0() } }
+		let uncommitedUpdates = self.uncommitedUpdates
+		self.uncommitedUpdates = nil
+
+		let collectionView = self.collectionView
+
+		let completion = { (finished: Bool) -> Void in
+			if !finished, let some = collectionView {
+				debugPrint("Animation are interrupted for updates of collection view  - \(some)")
+			}
+		}
+
+        let updates: () -> Void = { uncommitedUpdates?.forEach { $0() } }
         collectionView?.performBatchUpdates(updates, completion: completion)
     }
     
