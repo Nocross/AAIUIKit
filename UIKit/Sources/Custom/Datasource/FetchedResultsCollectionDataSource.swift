@@ -17,6 +17,8 @@
 import UIKit
 import CoreData
 
+import AAICoreData
+
 @available(iOS 6.0, *)
 public protocol FetchedResultsCollectionDataSourceCallback {
     associatedtype FetchResultType
