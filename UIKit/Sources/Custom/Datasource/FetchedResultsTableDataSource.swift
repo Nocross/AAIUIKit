@@ -25,24 +25,28 @@ public class FetchedResultsTableDataSource<FetchResultType: NSFetchRequestResult
 
     public typealias CellDequeueBlock = (_ tableView: UITableView, _ indexPath: IndexPath, _ object: FetchResultType) -> UITableViewCell
     public typealias InsertionBlock = (_ tableView: UITableView, _ indexPath: IndexPath) -> FetchResultType
-    public typealias ReloadBlock = (_ tableView: UITableView, _ indexPath: IndexPath,  _ object: FetchResultType) -> Bool
+    public typealias ShouldReloadBlock = (_ tableView: UITableView, _ indexPath: IndexPath,  _ object: FetchResultType) -> Bool
+    
+    public typealias CanEditRowStrategy = (_ tableView: UITableView, _ indexPath: IndexPath) -> Bool
 
     public private(set) weak var tableView: UITableView?
     public let fetchedResultsController: NSFetchedResultsController<FetchResultType>
 
     public let dequeueBlock: CellDequeueBlock
     public let insertionBlock: InsertionBlock?
-    public let shouldReloadBlock: ReloadBlock?
+    public let shouldReloadBlock: ShouldReloadBlock?
+    public let canEditRowStrategy: CanEditRowStrategy?
     
     private var batch: [() -> Void]?
 
-    public init(withTableView tableView: UITableView, fetchedResultsController frc: NSFetchedResultsController<FetchResultType>, cellDequeueBlock: @escaping CellDequeueBlock, insertionBlock: InsertionBlock? = nil, shouldReloadBlock: ReloadBlock? = nil) {
+    public init(withTableView tableView: UITableView, fetchedResultsController frc: NSFetchedResultsController<FetchResultType>, cellDequeueBlock: @escaping CellDequeueBlock, insertionBlock: InsertionBlock? = nil, shouldReloadBlock: ShouldReloadBlock? = nil, canEditRow: CanEditRowStrategy? = nil) {
         self.tableView = tableView
 
         fetchedResultsController = frc
         dequeueBlock = cellDequeueBlock
         self.insertionBlock = insertionBlock
         self.shouldReloadBlock = shouldReloadBlock
+        self.canEditRowStrategy = canEditRow
     }
 
     public func performFetch() throws {
@@ -128,12 +132,37 @@ public class FetchedResultsTableDataSource<FetchResultType: NSFetchRequestResult
 
         return result
     }
+    
+//    public func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+//        <#code#>
+//    }
 
     // Editing
+    
+    public func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        var result = true
+        
+        if let strategy = canEditRowStrategy {
+            result = strategy(tableView, indexPath)
+        }
+        
+        return result
+    }
 
     // Moving/reordering
+    
+//    public func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+//        return true
+//    }
+    
+//    public func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+//        <#code#>
+//    }
+
 
     // Index
+    
+    
 
     public func sectionIndexTitles(for tableView: UITableView) -> [String]? {
         assert(tableView === self.tableView, "Called from unregistered table view")
