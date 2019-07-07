@@ -18,35 +18,97 @@
 import CoreData
 import UIKit
 
+import AAIFoundation
+
 import AAICoreData
 
 @available(iOS 3.0, *)
-public class FetchedResultsTableDataSource<FetchResultType: NSFetchRequestResult>: NSObject, NSFetchedResultsControllerDelegate, UITableViewDataSource {
-
-    public typealias CellDequeueBlock = (_ tableView: UITableView, _ indexPath: IndexPath, _ object: FetchResultType) -> UITableViewCell
-    public typealias InsertionBlock = (_ tableView: UITableView, _ indexPath: IndexPath) -> FetchResultType
-    public typealias ShouldReloadBlock = (_ tableView: UITableView, _ indexPath: IndexPath,  _ object: FetchResultType) -> Bool
+public protocol FetchedResultsTableDataSourceAggregateStrategy {
+    associatedtype FetchResultType
     
-    public typealias CanEditRowStrategy = (_ tableView: UITableView, _ indexPath: IndexPath) -> Bool
+    associatedtype RowCellDequeueStategy: FetchedResultsTableDataSourceRowCellDequeueStrategy where RowCellDequeueStategy.FetchResultType == FetchResultType
+    
+    associatedtype ObjectInsertionStrategy: FetchedResultsTableDataSourceObjectInsertionStrategy //where ObjectInsertionStrategy.FetchResultType == FetchResultType
+    
+    associatedtype RowReloadDelagate: FetchedResultsTableDataSourceRowReloadDelagate where RowReloadDelagate.FetchResultType == FetchResultType
+    
+    associatedtype RowEditingDelegate: FetchedResultsTableDataSourceRowEditingDelegate
+    
+//    associatedtype RowReorderingStrategy: FetchedResultsTableDataSourceRowReorderingStrategy
+    
+    var rowCellDequeueStategy: RowCellDequeueStategy { get }
+    var objectInsertionStrategy: ObjectInsertionStrategy? { get }
+    var rowReloadDelagate: RowReloadDelagate? { get }
+    var rowEditingDelegate: RowEditingDelegate? { get }
+//    var rowReorderingStrategy: RowReorderingStrategy? { get }
+}
+
+//MARK: -
+
+@available(iOS 3.0, *)
+public protocol FetchedResultsTableDataSourceRowCellDequeueStrategy {
+    associatedtype FetchResultType: NSFetchRequestResult
+    
+    func dequeueCell(for tableView: UITableView, at indexPath: IndexPath, with object: FetchResultType) -> UITableViewCell
+}
+
+@available(iOS 3.0, *)
+public protocol FetchedResultsTableDataSourceObjectInsertionStrategy {
+//    associatedtype FetchResultType: NSFetchRequestResult
+    
+    func insertObject(in tableView: UITableView, at indexPath: IndexPath, completion handler: (NSManagedObject) throws -> Void)
+}
+
+@available(iOS 3.0, *)
+public protocol FetchedResultsTableDataSourceRowReloadDelagate: class {
+    associatedtype FetchResultType: NSFetchRequestResult
+    
+    func shouldReloadRow(in tableView: UITableView, at indexPath: IndexPath, for object: FetchResultType) -> Bool
+}
+
+@available(iOS 3.0, *)
+public protocol FetchedResultsTableDataSourceRowEditingDelegate: class {
+    func canEditRow(in tableView: UITableView, at indexPath: IndexPath) -> Bool
+}
+
+public protocol FetchedResultsTableDataSourceRowReorderingStrategy {
+    func moveRow(in tableView: UITableView, at sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath)
+}
+
+public protocol FetchedResultsTableDataSourceRowReorderingDelegate: FetchedResultsTableDataSourceRowReorderingStrategy {
+    func canMoveRow(in tableView: UITableView, at indexPath: IndexPath) -> Bool
+}
+
+//MARK: -
+
+@available(iOS 3.0, *)
+open class FetchedResultsTableDataSource<FetchResultType, Strategy>: NSObject, NSFetchedResultsControllerDelegate, UITableViewDataSource where Strategy : FetchedResultsTableDataSourceAggregateStrategy, FetchResultType == Strategy.FetchResultType {
+    
+    public typealias CellDequeueStategy = FetchedResultsTableDataSourceRowCellDequeueStrategy
+    public typealias CellInsertionStrategy = FetchedResultsTableDataSourceObjectInsertionStrategy
+    public typealias CellReloadDelagate = FetchedResultsTableDataSourceRowReloadDelagate
+    public typealias RowEditingDelegate = FetchedResultsTableDataSourceRowEditingDelegate
 
     public private(set) weak var tableView: UITableView?
     public let fetchedResultsController: NSFetchedResultsController<FetchResultType>
 
-    public let dequeueBlock: CellDequeueBlock
-    public let insertionBlock: InsertionBlock?
-    public let shouldReloadBlock: ShouldReloadBlock?
-    public let canEditRowStrategy: CanEditRowStrategy?
     
-    private var batch: [() -> Void]?
-
-    public init(withTableView tableView: UITableView, fetchedResultsController frc: NSFetchedResultsController<FetchResultType>, cellDequeueBlock: @escaping CellDequeueBlock, insertionBlock: InsertionBlock? = nil, shouldReloadBlock: ShouldReloadBlock? = nil, canEditRow: CanEditRowStrategy? = nil) {
+    public let strategy: Strategy
+    
+    private let lock: Locking = OSUnfairLock()
+    
+    private var batch: [() -> Void]? {
+        get { return lock.withCritical { return _batch } }
+        set { lock.withCritical { _batch = newValue } }
+    }
+    private var _batch: [() -> Void]?
+    
+    public init(withTableView tableView: UITableView, fetchedResultsController frc: NSFetchedResultsController<FetchResultType>, strategy: Strategy) {
         self.tableView = tableView
-
+        
         fetchedResultsController = frc
-        dequeueBlock = cellDequeueBlock
-        self.insertionBlock = insertionBlock
-        self.shouldReloadBlock = shouldReloadBlock
-        self.canEditRowStrategy = canEditRow
+        
+        self.strategy = strategy
     }
 
     public func performFetch() throws {
@@ -102,7 +164,7 @@ public class FetchedResultsTableDataSource<FetchResultType: NSFetchRequestResult
         assert(tableView === self.tableView, "Called from unregistered table view")
 
         let object = fetchedResultsController.object(at: indexPath)
-        let cell = dequeueBlock(tableView, indexPath, object)
+        let cell = strategy.rowCellDequeueStategy.dequeueCell(for: tableView, at: indexPath, with: object)
 
         return cell
     }
@@ -140,13 +202,9 @@ public class FetchedResultsTableDataSource<FetchResultType: NSFetchRequestResult
     // Editing
     
     public func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        var result = true
+        let result = strategy.rowEditingDelegate?.canEditRow(in:tableView, at: indexPath)
         
-        if let strategy = canEditRowStrategy {
-            result = strategy(tableView, indexPath)
-        }
-        
-        return result
+        return result ?? true
     }
 
     // Moving/reordering
@@ -180,27 +238,37 @@ public class FetchedResultsTableDataSource<FetchResultType: NSFetchRequestResult
 
     public func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         assert(tableView === self.tableView, "Called from unregistered table view")
-
-        guard let object = fetchedResultsController.object(at: indexPath) as? NSManagedObject else {
-            preconditionFailure()
-        }
-
+        
         switch editingStyle {
         case .insert:
-            if let block = insertionBlock, let object = block(tableView, indexPath) as? NSManagedObject , !object.isInserted {
-                fetchedResultsController.managedObjectContext.insert(object)
+            let context = NSManagedObjectContext(parent: fetchedResultsController.managedObjectContext, concurrencyType: .mainQueueConcurrencyType)
+            
+            strategy.objectInsertionStrategy?.insertObject(in: tableView, at: indexPath) {
+                context.insert($0)
+                
+                try $0.validateForInsert()
+                try context.save()
             }
-
+            
         case .delete:
-            fetchedResultsController.managedObjectContext.delete(object)
-
+            let context = fetchedResultsController.managedObjectContext
+            
+            let work = { [unowned self] in
+                guard let object = self.fetchedResultsController.object(at: indexPath) as? NSManagedObject else {
+                    preconditionFailure()
+                }
+                
+                self.fetchedResultsController.managedObjectContext.delete(object)
+            }
+            
+            context.concurrencyType == .mainQueueConcurrencyType ? work() : context.performAndWait(work)
+            
         case .none:
             debugPrint("commit to tableView \(tableView) with editing style - \(editingStyle)")
             break
             
         @unknown default:
-            debugPrint("Uknown NSFetchedResultsChangeType - \(editingStyle)")
-            break
+            fatalUnknownValueError(editingStyle)
         }
     }
 
@@ -210,14 +278,14 @@ public class FetchedResultsTableDataSource<FetchResultType: NSFetchRequestResult
     //MARK: - NSFetchedResultsControllerDelegate
 
     public func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        precondition(controller == fetchedResultsController)
+        precondition(controller === fetchedResultsController)
         precondition(batch == nil)
         
         batch = []
     }
 
     public func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        precondition(controller == fetchedResultsController)
+        precondition(controller === fetchedResultsController)
         
         guard let batch = batch else { preconditionFailure() }
         
@@ -229,6 +297,7 @@ public class FetchedResultsTableDataSource<FetchResultType: NSFetchRequestResult
         self.batch = nil
     }
 
+    /*
     public func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, sectionIndexTitleForSectionName sectionName: String) -> String? {
         
         var result: String?
@@ -240,6 +309,7 @@ public class FetchedResultsTableDataSource<FetchResultType: NSFetchRequestResult
 
         return result
     }
+    */
 
     public func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange sectionInfo: NSFetchedResultsSectionInfo, atSectionIndex sectionIndex: Int, for type: NSFetchedResultsChangeType) {
         guard let tableView = self.tableView else {
@@ -281,9 +351,9 @@ public class FetchedResultsTableDataSource<FetchResultType: NSFetchRequestResult
             block = { tableView.moveRow(at: indexPath!, to: newIndexPath!) }
         case .update:
             let shouldReload: Bool
-            if let block = shouldReloadBlock  {
+            if let strategy = strategy.rowReloadDelagate  {
                 let object = anObject as! FetchResultType
-                shouldReload = block(tableView, indexPath!, object)
+                shouldReload = strategy.shouldReloadRow(in: tableView, at: indexPath!, for: object)
             } else {
                 shouldReload = true
             }
@@ -334,5 +404,122 @@ public class FetchedResultsTableDataSource<FetchResultType: NSFetchRequestResult
         } else {
             OperationQueue.main.addOperation(callout)
         }
+    }
+}
+
+//MARK: -
+
+@available(iOS 3.0, *)
+public class SimplifiedFetchedResultsTableDataSource<FetchResultType>:
+FetchedResultsTableDataSource<FetchResultType,
+FetchedResultsTableDataSourceStrategyValue<FetchResultType,
+CellDequeueStategyValue<FetchResultType>,
+ObjectInsertionStrategyValue<FetchResultType>,
+CellReloadDelagateValue<FetchResultType>,
+RowEditingDelegateValue<FetchResultType> /* CellDequeueStategyValue */> /* FetchedResultsTableDataSource */> where FetchResultType: NSFetchRequestResult {
+    
+    public typealias CellDequeueBlock = CellDequeueStategyValue<FetchResultType>.CellDequeueBlock
+    public typealias InsertionBlock = ObjectInsertionStrategyValue<FetchResultType>.InsertionBlock
+    public typealias ShouldReloadRowBlock = CellReloadDelagateValue<FetchResultType>.ShouldReloadRowBlock
+    
+    public typealias CanEditRowStrategy = RowEditingDelegateValue<FetchResultType>.CanEditRowStrategy
+    
+    //MARK: -
+    
+    public init(withTableView tableView: UITableView, fetchedResultsController frc: NSFetchedResultsController<FetchResultType>, cellDequeueBlock: @escaping CellDequeueBlock, insertionBlock: InsertionBlock? = nil, shouldReloadBlock: ShouldReloadRowBlock? = nil, canEditRow: CanEditRowStrategy? = nil) {
+        
+        let dequeue = CellDequeueStategyValue<FetchResultType>(dequeueCell: cellDequeueBlock)
+        let insert = insertionBlock == nil ? nil : ObjectInsertionStrategyValue<FetchResultType>(insertion: insertionBlock!)
+        let reload = shouldReloadBlock == nil ? nil : CellReloadDelagateValue(with: shouldReloadBlock!)
+        let edit = canEditRow == nil ? nil : RowEditingDelegateValue<FetchResultType>(with: canEditRow!)
+        
+        let strategy = FetchedResultsTableDataSourceStrategyValue(rowCellDequeueStategy: dequeue, objectInsertionStrategy: insert, rowReloadDelagate: reload, rowEditingDelegate: edit)
+        
+        super.init(withTableView: tableView, fetchedResultsController: frc, strategy: strategy)
+    }
+}
+
+//MARK: -
+
+@available(iOS 3.0, *)
+public struct FetchedResultsTableDataSourceStrategyValue<FetchResultType, CellDequeueStategyType, ObjectInsertionStrategyType, CellReloadDelagateType, RowEditingDelegateType>: FetchedResultsTableDataSourceAggregateStrategy where CellDequeueStategyType : FetchedResultsTableDataSourceRowCellDequeueStrategy, CellDequeueStategyType.FetchResultType == FetchResultType, ObjectInsertionStrategyType : FetchedResultsTableDataSourceObjectInsertionStrategy/*, ObjectInsertionStrategyType.FetchResultType == FetchResultType*/, CellReloadDelagateType : FetchedResultsTableDataSourceRowReloadDelagate, CellReloadDelagateType.FetchResultType == FetchResultType, RowEditingDelegateType: FetchedResultsTableDataSourceRowEditingDelegate {
+    
+    public typealias FetchResultType = FetchResultType
+    
+    public typealias RowCellDequeueStategy = CellDequeueStategyType
+    
+    public typealias ObjectInsertionStrategy = ObjectInsertionStrategyType
+    
+    public typealias RowReloadDelagate = CellReloadDelagateType
+    
+    public typealias RowEditingDelegate = RowEditingDelegateType
+    
+    public let rowCellDequeueStategy: RowCellDequeueStategy
+    
+    public let objectInsertionStrategy: ObjectInsertionStrategy?
+    
+    public let rowReloadDelagate: RowReloadDelagate?
+    
+    public let rowEditingDelegate: RowEditingDelegate?
+}
+
+//MARK: -
+
+@available(iOS 3.0, *)
+public struct CellDequeueStategyValue<FetchResultType>: FetchedResultsTableDataSourceRowCellDequeueStrategy where FetchResultType: NSFetchRequestResult {
+    
+    public typealias CellDequeueBlock = (_ tableView: UITableView, _ indexPath: IndexPath, _ object: FetchResultType) -> UITableViewCell
+    
+    public let dequeueCell: CellDequeueBlock
+    
+    public func dequeueCell(for tableView: UITableView, at indexPath: IndexPath, with object: FetchResultType) -> UITableViewCell {
+        return dequeueCell(tableView, indexPath, object)
+    }
+}
+
+@available(iOS 3.0, *)
+public struct ObjectInsertionStrategyValue<Object>: FetchedResultsTableDataSourceObjectInsertionStrategy where Object : NSFetchRequestResult {
+    public typealias FetchResultType = Object
+    
+    public typealias InsertionBlock = (_ tableView: UITableView, _ indexPath: IndexPath, _ handler: (NSManagedObject) throws -> Void) -> Void
+    
+    public let insertion: InsertionBlock
+    
+    public func insertObject(in tableView: UITableView, at indexPath: IndexPath, completion handler: (NSManagedObject) throws -> Void) {
+        return insertion(tableView, indexPath, handler)
+    }
+}
+
+@available(iOS 3.0, *)
+public class CellReloadDelagateValue<Object>: FetchedResultsTableDataSourceRowReloadDelagate where Object : NSFetchRequestResult {
+    public typealias FetchResultType = Object
+    
+    public typealias ShouldReloadRowBlock = (_ tableView: UITableView, _ indexPath: IndexPath,  _ object: FetchResultType) -> Bool
+    
+    private let shouldReload: ShouldReloadRowBlock
+    
+    init(with block: @escaping ShouldReloadRowBlock) {
+        shouldReload = block
+    }
+    
+    public func shouldReloadRow(in tableView: UITableView, at indexPath: IndexPath, for object: Object) -> Bool {
+        return shouldReload(tableView, indexPath, object)
+    }
+}
+
+@available(iOS 3.0, *)
+public class RowEditingDelegateValue<Object>: FetchedResultsTableDataSourceRowEditingDelegate where Object : NSFetchRequestResult {
+    typealias FetchResultType = Object
+    
+    public typealias CanEditRowStrategy = (_ tableView: UITableView, _ indexPath: IndexPath) -> Bool
+    
+    public init(with block: @escaping CanEditRowStrategy) {
+        canEdit = block
+    }
+    
+    private let canEdit: CanEditRowStrategy
+    
+    public func canEditRow(in tableView: UITableView, at indexPath: IndexPath) -> Bool {
+        return canEdit(tableView, indexPath)
     }
 }

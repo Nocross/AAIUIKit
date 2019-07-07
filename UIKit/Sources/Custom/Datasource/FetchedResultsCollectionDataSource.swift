@@ -284,6 +284,7 @@ public class FetchedResultsCollectionDataSource<FetchResultType, CallbackType>: 
 
 //MARK: -
 
+@available(iOS 6.0, *)
 public struct FetchedResultsCollectionDataSourceCallbackValue<FetchResultType, SupplementarySourceType, MoveHandlerType>: FetchedResultsCollectionDataSourceCallback
     where SupplementarySourceType: FetchedResultsCollectionDataSourceSupplementaryElementSource, SupplementarySourceType.FetchResultType == FetchResultType,
     MoveHandlerType: FetchedResultsCollectionDataSourceMoveHandler, MoveHandlerType.FetchResultType == FetchResultType
@@ -309,6 +310,7 @@ public struct FetchedResultsCollectionDataSourceCallbackValue<FetchResultType, S
     }
 }
 
+@available(iOS 6.0, *)
 public struct FetchedResultsCollectionDataSourceSupplementarySource<FetchResultType>: FetchedResultsCollectionDataSourceSupplementaryElementSource where FetchResultType: NSFetchRequestResult {
     public typealias DequeueBlock = (_ collectionView: UICollectionView, _ kind: String, _ indexPath: IndexPath, _ object: FetchResultType) -> UICollectionReusableView
 
@@ -319,6 +321,7 @@ public struct FetchedResultsCollectionDataSourceSupplementarySource<FetchResultT
     }
 }
 
+@available(iOS 9.0, *)
 public struct FetchedResultsCollectionDataSourceMoveHandlerValue<FetchResultType>: FetchedResultsCollectionDataSourceMoveHandler where FetchResultType: NSFetchRequestResult {
     public typealias FetchResultType = FetchResultType
     
