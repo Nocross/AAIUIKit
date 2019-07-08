@@ -21,11 +21,11 @@ extension UICollectionView {
     public struct ElementKind: StringRepresentableIdentifierProtocol {
         public typealias RawValue = String
         
-        public init(rawValue: String) {
+        public init(rawValue: RawValue) {
             self.rawValue = rawValue
         }
         
-        public let rawValue: String
+        public let rawValue: RawValue
     }
 }
 

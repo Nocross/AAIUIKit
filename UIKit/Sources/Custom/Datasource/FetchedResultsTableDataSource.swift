@@ -95,7 +95,7 @@ open class FetchedResultsTableDataSource<FetchResultType, Strategy>: NSObject, N
     
     public let strategy: Strategy
     
-    private let lock: Locking = OSUnfairLock()
+    private let lock: Locking = NSRecursiveLock()
     
     private var batch: [() -> Void]? {
         get { return lock.withCritical { return _batch } }
@@ -109,6 +109,11 @@ open class FetchedResultsTableDataSource<FetchResultType, Strategy>: NSObject, N
         fetchedResultsController = frc
         
         self.strategy = strategy
+    }
+    
+    deinit {
+        fetchedResultsController.delegate = nil
+        batch = nil
     }
 
     public func performFetch() throws {

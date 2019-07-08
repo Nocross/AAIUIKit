@@ -15,11 +15,12 @@
  */
 
 import UIKit
+import AAIFoundation
 
 extension UITableViewCell {
     
     @available(iOS 5.0, *)
-    public struct ReuseIdentifier: RawRepresentable {
+    public struct ReuseIdentifier: StringRepresentableIdentifierProtocol {
         public typealias RawValue = String
         
         private init() { rawValue = "" }
