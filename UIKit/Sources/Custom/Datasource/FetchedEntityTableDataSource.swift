@@ -491,13 +491,6 @@ open class FetchedEntityTableDataSource<ManagedType: NSManagedObject>: NSObject,
     //MARK: - KVO/KVC
     
     open override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        var shouldInvoke = true
-        defer {
-            if shouldInvoke {
-                super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-            }
-        }
-        
         guard let keyPath = keyPath else { return }
         
         guard let object = fetchedResultsController.fetchedObjects?.first else { return }
@@ -505,9 +498,7 @@ open class FetchedEntityTableDataSource<ManagedType: NSManagedObject>: NSObject,
         
         
         keyPaths.append(property.name)
-        shouldInvoke = false
-        
-        }
+    }
     
     //MARK: - NSFetchedResultsControllerDelegate
     
