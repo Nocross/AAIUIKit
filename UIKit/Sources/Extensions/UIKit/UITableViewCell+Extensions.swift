@@ -126,3 +126,11 @@ extension UITableViewCell {
         return unsafeBitCast(selector, to: UnsafeRawPointer.self)
     }
 }
+
+//MARK: -
+
+extension UITableViewCell.StateMask {
+    public static var defaultMask: UITableViewCell.StateMask {
+        return UITableViewCell.StateMask(rawValue: 0)
+    }
+}
