@@ -35,7 +35,7 @@ extension UIAlertController {
         let url = URL(string: UIApplication.openSettingsURLString)!
 
         let completion: (Bool) -> Void = { [weak self] _ in
-            self?.dismiss()
+            self?.dismiss(animated: UIView.areAnimationsEnabled)
         }
 
         let handler: (UIAlertAction) -> Void = { _ in
