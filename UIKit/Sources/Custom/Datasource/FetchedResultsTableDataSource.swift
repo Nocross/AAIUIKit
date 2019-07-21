@@ -284,15 +284,16 @@ open class FetchedResultsTableDataSource<FetchResultType, Strategy>: NSObject, N
 
     public func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         precondition(controller === fetchedResultsController)
-        precondition(batch == nil)
         
-        batch = []
+        if batch == nil {
+            batch = []
+        }
     }
 
     public func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         precondition(controller === fetchedResultsController)
         
-        guard let batch = batch else { preconditionFailure() }
+        guard let batch = batch else { assertionFailure("Unbalanced call to controllerWillChangeContent/controllerDidChangeContent"); return }
         
         let isRevelant = !batch.isEmpty
         if isRevelant {

@@ -17,12 +17,6 @@
 import Foundation
 import AAIFoundation
 
-extension String.Localized {
-    public struct Error {
-        private init() {}
-    }
-}
-
 extension String.Localized.Error {
     public static var reasonFormat: String {
         let key = "%s, because %s"
