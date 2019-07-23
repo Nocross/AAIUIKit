@@ -54,7 +54,7 @@ extension UIAlertController {
     //MARK: -
 
     public func addDismissAction(with title: String? = nil, style: UIAlertAction.Style = .cancel) {
-        let title = title ?? String.Localized.Common.Confirmation.ok
+        let title = title ?? String.Localized.Common.Dismissal.close
         let dismissAction = UIAlertAction(dismissWithTitle: title, style: style, alertController: self)
 
         addAction(dismissAction)

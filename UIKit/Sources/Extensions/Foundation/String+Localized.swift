@@ -57,6 +57,12 @@ extension String.Localized.Common.Dismissal {
         let value = "Cancel"
         return NSLocalizedString(key, tableName: nil, bundle: Bundle.embeddedFramework, value: value, comment: value)
     }
+    
+    public static var close: String {
+        let key = "common.dismissal.cancel"
+        let value = "Close"
+        return NSLocalizedString(key, tableName: nil, bundle: Bundle.embeddedFramework, value: value, comment: value)
+    }
 }
 
 //MARK: -

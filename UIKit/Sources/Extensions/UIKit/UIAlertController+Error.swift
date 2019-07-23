@@ -15,6 +15,7 @@
 */
 
 import UIKit
+import AAIFoundation
 
 extension UIAlertController {
 
@@ -39,6 +40,26 @@ extension UIAlertController {
 
             self.addAction(action)
         }
+    }
+}
+
+//MARK: -
+
+extension UIAlertController {
+    public static func makeforUknownError(withRetry handler: (() -> Bool)? = nil) -> UIAlertController {
+        let error = makeUnknownError(retry: handler)
+        let this = UIAlertController(with: error)
+        
+        let recovered = { [weak this](recovered: Bool) in
+            if recovered {
+                this?.dismiss()
+            }
+        }
+        
+        this.addRecoveryActions(for: error, resultHandler: recovered)
+        this.addDismissAction()
+        
+        return this
     }
 }
 
