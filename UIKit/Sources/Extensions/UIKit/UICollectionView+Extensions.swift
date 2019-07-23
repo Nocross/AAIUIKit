@@ -21,6 +21,12 @@ extension UICollectionView {
     
     public typealias SupplementaryViewClass = UICollectionReusableView
     
+    @IBOutlet public var collectionViewBackground: UIView? {
+        get { return self.backgroundView }
+        
+        set { self.backgroundView = newValue }
+    }
+    
     open func dequeueReusableCell<T: CellClass>(withReuseIdentifier identifier: String, for indexPath: IndexPath) -> T {
         let cell = dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath)
         guard let result = cell as? T else { preconditionFailure("Cell type mismatch") }
