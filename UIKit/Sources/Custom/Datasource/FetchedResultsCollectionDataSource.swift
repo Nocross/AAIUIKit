@@ -28,7 +28,10 @@ public protocol FetchedResultsCollectionDataSourceCallback {
     var supplementaryElementSource: SupplementarySource? { get }
     var moveHandler: MoveHandler? { get }
     
-    func collectionView(_ collectionView: UICollectionView, _ indexPath: IndexPath, _ object: FetchResultType) -> UICollectionViewCell
+    
+    func collectionView(_ collectionView: UICollectionView, dequeuCellAt indexPath: IndexPath, _ object: FetchResultType) -> UICollectionViewCell
+    
+    func collectionView(_ collectionView: UICollectionView, shouldReloadAt indexPath: IndexPath, _ object: FetchResultType) -> Bool
 }
 
 @available(iOS 6.0, *)
@@ -118,7 +121,7 @@ public class FetchedResultsCollectionDataSource<FetchResultType, CallbackType>: 
         
         let object = fetchedResultsController.object(at: indexPath)
         
-        let cell = callback.collectionView(collectionView, indexPath, object)
+        let cell = callback.collectionView(collectionView, dequeuCellAt: indexPath, object)
         
         return cell
     }
@@ -211,9 +214,17 @@ public class FetchedResultsCollectionDataSource<FetchResultType, CallbackType>: 
 				debugPrint("Animation are interrupted for updates of collection view  - \(some)")
 			}
 		}
-
-        let updates: () -> Void = { uncommitedUpdates?.forEach { $0() } }
-        collectionView?.performBatchUpdates(updates, completion: completion)
+        
+        let work = {
+            let updates: () -> Void = { uncommitedUpdates?.forEach { $0() } }
+            collectionView?.performBatchUpdates(updates, completion: completion)
+        }
+        
+        if controller.managedObjectContext.concurrencyType == .mainQueueConcurrencyType {
+            work()
+        } else {
+            OperationQueue.main.addOperation(work)
+        }
     }
     
     public func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, sectionIndexTitleForSectionName sectionName: String) -> String? {
@@ -269,12 +280,19 @@ public class FetchedResultsCollectionDataSource<FetchResultType, CallbackType>: 
         switch type {
         case .insert:
             collectionView.insertItems(at: [newIndexPath!])
+            
         case .delete:
             collectionView.deleteItems(at: [indexPath!])
+            
         case .move:
             collectionView.moveItem(at: indexPath!, to: newIndexPath!)
+            
         case .update:
-            collectionView.reloadItems(at: [indexPath!])
+            
+            if callback.collectionView(collectionView, shouldReloadAt: indexPath!, anObject as! FetchResultType) {
+                collectionView.reloadItems(at: [indexPath!])
+            }
+            
         @unknown default:
             debugPrint("Uknown NSFetchedResultsChangeType - \(type)")
             break
@@ -298,15 +316,23 @@ public struct FetchedResultsCollectionDataSourceCallbackValue<FetchResultType, S
     
     public typealias CellDequeueBlock = (_ collectionView: UICollectionView, _ indexPath: IndexPath, _ object: FetchResultType) -> UICollectionViewCell
     
+    public typealias ShouldReloadBlock = (_ collectionView: UICollectionView, _ shouldReloadAt: IndexPath, _ object: FetchResultType) -> Bool
+    
     //MARK: -
     
-    let dequeueCell: CellDequeueBlock
+    public let dequeueCell: CellDequeueBlock
+    public let shouldReloadHandler: ShouldReloadBlock?
     
     public let supplementaryElementSource: SupplementarySource?
     public let moveHandler: MoveHandler?
     
-    public func collectionView(_ collectionView: UICollectionView, _ indexPath: IndexPath, _ object: FetchResultType) -> UICollectionViewCell {
+    
+    public func collectionView(_ collectionView: UICollectionView, dequeuCellAt indexPath: IndexPath, _ object: FetchResultType) -> UICollectionViewCell {
         return dequeueCell(collectionView, indexPath, object)
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, shouldReloadAt indexPath: IndexPath, _ object: FetchResultType) -> Bool {
+        return shouldReloadHandler?(collectionView, indexPath, object) ?? true
     }
 }
 
@@ -345,8 +371,8 @@ public struct FetchedResultsCollectionDataSourceMoveHandlerValue<FetchResultType
 
 extension FetchedResultsCollectionDataSource where CallbackType == FetchedResultsCollectionDataSourceCallbackValue<FetchResultType, FetchedResultsCollectionDataSourceSupplementarySource<FetchResultType>, FetchedResultsCollectionDataSourceMoveHandlerValue<FetchResultType> > {
 
-    convenience init(withCollectionView collectionView: UICollectionView, fetchedResultsController frc: NSFetchedResultsController<FetchResultType>, dequeue block: @escaping CallbackType.CellDequeueBlock) {
-        let callback = CallbackType(dequeueCell: block, supplementaryElementSource: nil, moveHandler: nil)
+    convenience init(withCollectionView collectionView: UICollectionView, fetchedResultsController frc: NSFetchedResultsController<FetchResultType>, dequeue block: @escaping CallbackType.CellDequeueBlock, reload: CallbackType.ShouldReloadBlock? = nil) {
+        let callback = CallbackType(dequeueCell: block, shouldReloadHandler: reload, supplementaryElementSource: nil, moveHandler: nil)
 
         self.init(withCollectionView: collectionView, fetchedResultsController: frc, callback: callback)
     }

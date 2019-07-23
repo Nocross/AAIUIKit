@@ -22,14 +22,15 @@ public class SimplifiedFetchedResultsCollectionDataSource<FetchResultType>: Fetc
     public typealias Callback = FetchedResultsCollectionDataSourceCallbackValue<FetchResultType, FetchedResultsCollectionDataSourceSupplementarySource<FetchResultType>, FetchedResultsCollectionDataSourceMoveHandlerValue<FetchResultType> >
     
     public typealias CellDequeueBlock = Callback.CellDequeueBlock
+    public typealias ShouldReloadBlock = Callback.ShouldReloadBlock
     public typealias SupplementaryElementDequeueBlock = Callback.SupplementarySource.DequeueBlock
     public typealias MoveTuple = Callback.MoveHandler.MoveTuple
     
-    public init(withCollectionView collectionView: UICollectionView, fetchedResultsController frc: NSFetchedResultsController<FetchResultType>, dequeue block: @escaping Callback.CellDequeueBlock, supplementaryDequeue: SupplementaryElementDequeueBlock? = nil, move tuple: MoveTuple? = nil) {
+    public init(withCollectionView collectionView: UICollectionView, fetchedResultsController frc: NSFetchedResultsController<FetchResultType>, dequeue block: @escaping Callback.CellDequeueBlock, reload: Callback.ShouldReloadBlock? = nil, supplementaryDequeue: SupplementaryElementDequeueBlock? = nil, move tuple: MoveTuple? = nil) {
         let sup = supplementaryDequeue == nil ? nil : FetchedResultsCollectionDataSourceSupplementarySource<FetchResultType>(supplementaryDequeue: supplementaryDequeue!)
         let move = tuple == nil ? nil : FetchedResultsCollectionDataSourceMoveHandlerValue<FetchResultType>(move: tuple!)
         
-        let callback = Callback(dequeueCell: block, supplementaryElementSource: sup, moveHandler: move)
+        let callback = Callback(dequeueCell: block, shouldReloadHandler: reload, supplementaryElementSource: sup, moveHandler: move)
         
         super.init(withCollectionView: collectionView, fetchedResultsController: frc, callback: callback)
     }
